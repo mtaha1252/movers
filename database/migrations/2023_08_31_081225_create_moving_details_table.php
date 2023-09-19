@@ -14,6 +14,7 @@ return new class extends Migration {
     {
         Schema::create('moving_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users');
             $table->string('pickup_address')->nullable();
             $table->string('dropoff_address')->nullable();
 

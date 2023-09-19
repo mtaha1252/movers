@@ -8,13 +8,13 @@ use App\Models\DeliveryItemPicture;
 use Illuminate\Support\Facades\Validator;
 
 class DeliveryDetailController extends Controller
-{   
+{
 
 
 
     public function storeDeliveryDetails(Request $request)
     {
-        
+
         // Validation rules for the request data
         $validator = Validator::make($request->all(), [
             'pickup_address' => 'required|array|between:1,3',
@@ -46,11 +46,18 @@ class DeliveryDetailController extends Controller
         if ($validator->fails()) {
             return response()->json(['message' => $validator->messages()->first()], 422);
         }
+        $user = auth()->user();
+        if(!$user){
+            return response()->json([
+                'message'=> 'Invalid user.',
+            ], 422);
+        }
         // Create an array to store all the delivery details
         $deliveries = [];
         // foreach ($request->pickup_address as $key => $pickupAddress) {
             // Create a new DeliveryDetail instance for each set of pickup and dropoff addresses
             $delivery = new DeliveryDetail();
+            $delivery->user_id = $user->id;
             $delivery->pickup_address = json_encode($request->pickup_address);
             $delivery->dropoff_address = json_encode($request->dropoff_address);
             $delivery->pickup_date = $request->pickup_date;
@@ -101,7 +108,7 @@ class DeliveryDetailController extends Controller
                 $itemPictures = [];
                 foreach ($request->file('item_pictures') as $file) {
                     // Check if the file is an image
-                   
+
                     if ($file->isValid() && in_array($file->getClientOriginalExtension(), ['jpeg', 'png', 'jpg', 'gif'])) {
                         $fileName = time() . '_' . $file->getClientOriginalName();
                         $file->move(public_path('deliveryImages'), $fileName);
@@ -136,13 +143,89 @@ class DeliveryDetailController extends Controller
             'data' => $deliveries,
         ], 200);
     }
-    
-    
+    public function get_delivery_details()
+    {
+        // Retrieve records
+        $earthRadiusKm = 6371;
+        $earthRadiusMiles = 3959;
+        $records = DeliveryDetail::all();
+
+        $movingWithDistance = [];
+
+        foreach ($records as $move) {
+            $userLatitude = $move->pickup_latitude;
+            $userLongitude = $move->pickup_longitude;
+            $userLatitude1 = $move->dropoff_latitude;
+            $userLongitude1 = $move->dropoff_longitude;
+            $count = count($userLatitude);
+
+            for ($i = 0; $i < $count; $i++) {
+                $distanceKm = $earthRadiusKm * acos(
+                    cos(deg2rad($userLatitude[$i])) * cos(deg2rad($userLatitude1[$i]))*
+                    cos(deg2rad($userLongitude[$i]) - deg2rad($userLongitude1[$i])) +
+                    sin(deg2rad($userLatitude[$i])) * sin(deg2rad($userLatitude1[$i]))
+                );
+
+                $distanceMiles = $earthRadiusMiles * acos(
+                    cos(deg2rad($userLatitude[$i])) * cos(deg2rad($userLatitude1[$i]))*
+                    cos(deg2rad($userLongitude[$i]) - deg2rad($userLongitude1[$i])) +
+                    sin(deg2rad($userLatitude[$i])) * sin(deg2rad($userLatitude1[$i]))
+                );
+
+                // Store distances as separate parameters
+                $move->{"distance" . ($i + 1) . "_km"} = $distanceKm;
+                $move->{"distance" . ($i + 1) . "_miles"} = $distanceMiles;
+            }
+
+            $movingWithDistance[] = $move;
+        }
+        if(!empty($movingWithDistance)){
+            return response()->json([
+                'message'=> 'Get delivery details successfully.',
+                'deliveryDetails' => $movingWithDistance
+            ], 200);
+        }else{
+            return response()->json([
+                'message'=> 'Get delivery details failed.',
+                'deliveryDetails' => $movingWithDistance
+            ], 200);
+        }
+
+    }
+
+    public function user_get_delivery_details()
+    {
+        $user = auth()->user();
+        if(!$user){
+            return response()->json([
+                'message'=> 'Invalid user.',
+            ], 422);
+        }
+
+        $delivery = DeliveryDetail::where('user_id',$user->id)->get();
+
+        if(count($delivery) > 0){
+            return response()->json([
+                'message'=> 'Records Retrived succesfully.',
+                'delivery' => $delivery,
+                'success' => true,
+            ], 200);
+        }else{
+            return response()->json([
+                'message'=> 'Records Retrived failed.',
+                'delivery' => $delivery,
+                'success' => false,
+            ], 200);
+        }
+    }
+
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+
     public function index()
     {
         //

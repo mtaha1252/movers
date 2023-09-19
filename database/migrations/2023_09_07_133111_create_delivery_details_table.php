@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('delivery_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users');
             $table->json('pickup_address')->nullable();
             $table->json('dropoff_address')->nullable();
             $table->string('pickup_date')->nullable();

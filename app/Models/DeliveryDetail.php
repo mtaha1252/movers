@@ -34,15 +34,39 @@ class DeliveryDetail extends Model
         'dropoff_longitude',
         'pickup_flight_of_stairs'
     ];
-    
+
 
     // Add other properties if necessary, such as timestamps
     public $timestamps = true;
 
-    
+
     public function itemPictures()
     {
         return $this->hasMany(DeliveryItemPicture::class);
     }
-    
+
+    public function getPickupAddressAttribute($value) {
+        return json_decode($value, true);
+      }
+
+    public function getDropoffAddressAttribute($value){
+        return json_decode($value, true);
+    }
+
+    public function getPickupLatitudeAttribute($value){
+        return json_decode($value, true);
+    }
+
+    public function getPickupLongitudeAttribute($value){
+        return json_decode($value, true);
+    }
+
+    public function getDropoffLatitudeAttribute($value){
+        return json_decode($value, true);
+    }
+
+    public function getDropoffLongitudeAttribute($value){
+        return json_decode($value, true);
+    }
+
 }

@@ -6,10 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\MovingDetails;
 use GoogleMaps\GoogleMaps;
 use Illuminate\Support\Facades\Validator;
+use DB;
 class MovingDetailsController extends Controller
 {
     public function storeMoveDetails(Request $request)
     {
+
         // Validation rules for the request data
         $validator = Validator::make($request->all(), [
             'pickup_address' => 'required|string',
@@ -37,14 +39,19 @@ class MovingDetailsController extends Controller
         if ($validator->fails()) {
             return response()->json(['message' => $validator->messages()->first()], 422);
         }
-
+        $user = auth()->user();
+        if(!$user){
+            return response()->json([
+                'message'=> 'Invalid user.',
+            ], 422);
+        }
 
         // Retrieve the validated data
         $validatedData = $validator->validated();
 
         // Create a new MovingDetails instance with the validated data
         $delivery = new MovingDetails($validatedData);
-
+        $delivery->user_id = $user->id;
         // Handle conditional logic based on 'pickup_property_type' and 'pickup_elevator'
         if ($delivery->pickup_property_type === 'apartment' || $delivery->pickup_property_type === 'condominium') {
             // Handle fields related to apartments and condominiums
@@ -66,11 +73,11 @@ class MovingDetailsController extends Controller
         if (!is_dir($deliveryFolder)) {
             mkdir($deliveryFolder, 0777, true);
         }
-       
+
         // Upload item pictures to the 'delivery' folder
         $uploadedPictures = [];
         foreach ($request->file('item_pictures') as $file) {
-          
+
             // Check if the file is an image
             if ($file->isValid() && in_array($file->getClientOriginalExtension(), ['jpeg', 'png', 'jpg', 'gif'])) {
                 $fileName = time() . '_' . $file->getClientOriginalName();
@@ -88,7 +95,6 @@ class MovingDetailsController extends Controller
         // Attach uploaded picture file names to the delivery instance
         $delivery->item_pictures = json_encode($uploadedPictures);
 
-
         // Save the delivery record to the database
         if ($delivery->save()) {
             return response()->json([
@@ -102,7 +108,82 @@ class MovingDetailsController extends Controller
                 'success' => false,
                 'message' => 'Failed to store move details.'
             ], 200);
+
         }
 
     }
+    public function get_moving_details(){
+        // Assuming $earthRadius is defined somewhere in your code
+        $earthRadiusKm = 6371; // Earth's radius in kilometers
+        $earthRadiusMiles = 3959; // Earth's radius in miles
+
+        $moving = MovingDetails::all();
+
+        $movingWithDistance = [];
+
+        foreach($moving as $move){
+            $userLatitude = $move->pickup_latitude;
+            $userLongitude = $move->pickup_longitude;
+            $userLatitude1 = $move->dropoff_latitude;
+            $userLongitude1 = $move->dropoff_longitude;
+
+            $distanceKm = $earthRadiusKm * acos(
+                cos(deg2rad($userLatitude)) * cos(deg2rad($userLatitude1)) *
+                cos(deg2rad($userLongitude) - deg2rad($userLongitude1)) +
+                sin(deg2rad($userLatitude)) * sin(deg2rad($userLatitude1))
+            );
+
+            $distanceMiles = $earthRadiusMiles * acos(
+                cos(deg2rad($userLatitude)) * cos(deg2rad($userLatitude1)) *
+                cos(deg2rad($userLongitude) - deg2rad($userLongitude1)) +
+                sin(deg2rad($userLatitude)) * sin(deg2rad($userLatitude1))
+            );
+
+            $move->distance_km = $distanceKm;
+            $move->distance_miles = $distanceMiles;
+
+            $movingWithDistance[] = $move;
+        }
+        if(!empty($movingWithDistance)){
+            return response()->json([
+                'message'=> 'Get distance succussfuly.',
+                'distance' => $movingWithDistance
+            ], 200);
+        }else{
+            return response()->json([
+                'message'=> 'Get distance details failed.',
+                'distance' => $movingWithDistance
+            ], 200);
+        }
+    }
+
+    public function user_get_moving_details()
+    {
+        $user = auth()->user();
+        if(!$user){
+            return response()->json([
+                'message'=> 'Invalid user.',
+            ], 422);
+        }
+
+        $moving = MovingDetails::where('user_id',$user->id)->get();
+
+        if(count($moving) > 0){
+            return response()->json([
+                'message'=> 'Records Retrived succesfully.',
+                'moving' => $moving,
+                'success' => true,
+            ], 200);
+        }else{
+            return response()->json([
+                'message'=> 'Records Retrived failed.',
+                'moving' => $moving,
+                'success' => false,
+            ], 200);
+        }
+    }
+
+
 }
+
+
