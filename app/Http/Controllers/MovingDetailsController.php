@@ -172,13 +172,13 @@ class MovingDetailsController extends Controller
             return response()->json([
                 'message'=> 'Records Retrived succesfully.',
                 'moving' => $moving,
-                'success' => true,
+                'success' => true
             ], 200);
         }else{
             return response()->json([
                 'message'=> 'Records Retrived failed.',
                 'moving' => $moving,
-                'success' => false,
+                'success' => false
             ], 200);
         }
     }
