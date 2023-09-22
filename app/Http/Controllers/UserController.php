@@ -50,12 +50,12 @@ class UserController extends Controller
         $user->save();
 
         if ($request->hasFile('profile_image')) {
-            $filename = 'users/' . $user->id . '/profile_image';
+            $filename = 'users/' . $user->id . '';
             $image = $request->file('profile_image');
             $path = $image->store($filename, 'public');
             $user->profile_image = 'storage/' . $path; // Added a '/' after 'storage'
         }
-        
+
         Mail::to($user->email)->send(new OtpMail($otp));
         // Generate a token for the user
         $checkphone = User::where('phone_number', '=', $request->phone_number)->first();
@@ -406,11 +406,11 @@ class UserController extends Controller
         if (!is_dir($deliveryFolder)) {
             mkdir($deliveryFolder, 0777, true);
         }
-       
+
         // Upload item pictures to the 'delivery' folder
         $uploadedPictures = [];
         foreach ($request->file('item_pictures') as $file) {
-          
+
             // Check if the file is an image
             if ($file->isValid() && in_array($file->getClientOriginalExtension(), ['jpeg', 'png', 'jpg', 'gif'])) {
                 $fileName = time() . '_' . $file->getClientOriginalName();

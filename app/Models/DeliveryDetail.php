@@ -44,6 +44,16 @@ class DeliveryDetail extends Model
     {
         return $this->hasMany(DeliveryItemPicture::class);
     }
+    public function item_pictures(){
+        return $this->belongsToMany(DeliveryItemPicture::class , 'delivery_item_pictures','delivery_detail_id','item_picture_path');
+    }
+    public function pictures(){
+        return $this->hasMany(DeliveryItemPicture::class , 'delivery_detail_id');
+    }
+
+    public function userInfo(){
+        return $this->belongsTo(User::class,'user_id','id');
+    }
 
     public function getPickupAddressAttribute($value) {
         return json_decode($value, true);

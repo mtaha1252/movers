@@ -8,16 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class DeliveryItemPicture extends Model
 {
     use HasFactory;
-
+    protected $table= 'delivery_item_pictures';
     protected $fillable = [
         'delivery_detail_id',
         'item_picture_path',
     ];
 
-   
+
     public function deliveryDetail()
-{
-    return $this->belongsTo(DeliveryDetail::class);
-}
+    {
+        return $this->belongsTo(DeliveryDetail::class);
+    }
 
 }

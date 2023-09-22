@@ -61,4 +61,10 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public function movingInfo(){
+        return $this->hasOne(MovingDetails::class);
+    }
+    public function deliveryInfo(){
+        return $this->hasOne(DeliveryDetail::class);
+    }
 }

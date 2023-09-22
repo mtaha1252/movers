@@ -18,11 +18,13 @@ class MovingDetailsController extends Controller
             'dropoff_address' => 'required|string',
             'pickup_date' => 'required|date',
             'pickup_time' => 'required',
-            'item_pictures.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:10240',
+            'item_pictures.*' => 'required|image|mimes:jpeg,png,jpg|max:10240',
             'detailed_description' => 'required|string',
-            'pickup_property_type' => 'required|string|in:apartment,condominium',
+            'pickup_property_type' => 'required|string|in:apartment,condominium, house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse',
+            'dropoff_property_type'=> 'required|string|in:apartment,condominium, house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse',
             'pickup_bedrooms' => 'integer|nullable',
             'pickup_unit_number' => 'string|nullable',
+            'dropoff_unit_number' => 'string|nullable',
             'pickup_elevator' => 'required|boolean',
             'pickup_flight_of_stairs' => 'integer|nullable',
             'pickup_elevator_timing_from' => 'nullable',
@@ -57,6 +59,8 @@ class MovingDetailsController extends Controller
             // Handle fields related to apartments and condominiums
             $delivery->pickup_bedrooms = $validatedData['pickup_bedrooms'];
             $delivery->pickup_unit_number = $validatedData['pickup_unit_number'];
+        } else {
+            $delivery->pickup_unit_number = $validatedData['pickup_unit_number'];
         }
 
         if (!$delivery->pickup_elevator) {
@@ -68,48 +72,94 @@ class MovingDetailsController extends Controller
             $delivery->pickup_elevator_timing_to = $validatedData['pickup_elevator_timing_to'];
         }
 
-        // Ensure the 'delivery' folder exists
-        $deliveryFolder = public_path('delivery');
-        if (!is_dir($deliveryFolder)) {
-            mkdir($deliveryFolder, 0777, true);
+        if ($delivery->dropoff_property_type === 'apartment' || $delivery->dropoff_property_type === 'condominium') {
+            // Handle fields related to apartments and condominiums
+            $delivery->dropoff_unit_number = $validatedData['dropoff_unit_number'];
+        } else {
+            $delivery->dropoff_unit_number = $validatedData['dropoff_unit_number'];
         }
 
-        // Upload item pictures to the 'delivery' folder
-        $uploadedPictures = [];
-        foreach ($request->file('item_pictures') as $file) {
-
-            // Check if the file is an image
-            if ($file->isValid() && in_array($file->getClientOriginalExtension(), ['jpeg', 'png', 'jpg', 'gif'])) {
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $file->move($deliveryFolder, $fileName);
-                $uploadedPictures[] = $fileName;
-            } else {
-                // Handle invalid image file
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Invalid image file(s). Please upload valid images (jpeg, png, jpg, gif).'
-                ], 400);
-            }
+        if (!$delivery->dropoff_elevator) {
+            // Handle fields when there is no elevator
+            $delivery->dropoff_flight_of_stairs = $validatedData['dropoff_flight_of_stairs'];
+        } else {
+            // Handle fields when there is an elevator
+            $delivery->dropoff_elevator_timing_from = $validatedData['dropoff_elevator_timing_from'];
+            $delivery->dropoff_elevator_timing_to = $validatedData['dropoff_elevator_timing_to'];
         }
+
+
+        // // Ensure the 'delivery' folder exists
+        // $deliveryFolder = public_path('moving');
+        // if (!is_dir($deliveryFolder)) {
+        //     mkdir($deliveryFolder, 0777, true);
+        // }
+
+        // // Upload item pictures to the 'delivery' folder
+        // $uploadedPictures = [];
+        // foreach ($request->file('item_pictures') as $file) {
+
+        //     // Check if the file is an image
+        //     if ($file->isValid() && in_array($file->getClientOriginalExtension(), ['jpeg', 'png', 'jpg'])) {
+        //         $fileName = time() . '_' . $file->getClientOriginalName();
+        //         $file->move($deliveryFolder, $fileName);
+        //         $uploadedPictures[] = $fileName;
+        //     } else {
+        //         // Handle invalid image file
+        //         return response()->json([
+        //             'success' => false,
+        //             'message' => 'Invalid image file(s). Please upload valid images (jpeg, png, jpg, gif).'
+        //         ], 400);
+        //     }
+        // }
+
 
         // Attach uploaded picture file names to the delivery instance
-        $delivery->item_pictures = json_encode($uploadedPictures);
 
-        // Save the delivery record to the database
-        if ($delivery->save()) {
-            return response()->json([
-                'success' => true,
-                'message' => 'Move details stored successfully.',
-                'data' => $delivery
-            ], 200);
-        } else {
-            // Handle database save failure
-            return response()->json([
-                'success' => false,
-                'message' => 'Failed to store move details.'
-            ], 200);
+        // $delivery->item_pictures = json_encode($uploadedPictures);
 
-        }
+        // // Save the delivery record to the database
+        // if ($delivery->save()) {
+        //     return response()->json([
+        //         'success' => true,
+        //         'message' => 'Move details stored successfully.',
+        //         'data' => $delivery
+        //     ], 200);
+        // } else {
+        //     // Handle database save failure
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'Failed to store move details.'
+        //     ], 200);
+
+        // }
+        $deliveries = [];
+            // Handle item pictures
+            if ($request->hasFile('item_pictures')) {
+                $itemPictures = [];
+                foreach ($request->file('item_pictures') as $file) {
+                    // Check if the file is an image
+
+                    $filename = 'movingImages';
+                    $path = $file->store($filename, 'public');
+                    $itemPictures[] = 'storage/' . $path; // Added a '/' after 'storage'
+
+                }
+
+                // Attach uploaded picture file names to the delivery instance
+                $delivery->item_pictures = json_encode($itemPictures);
+            }
+
+            $deliveries[] = $delivery;
+            $delivery->save();
+        // }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Move details stored successfully.',
+            'data' => $deliveries,
+        ], 200);
+
 
     }
     public function get_moving_details(){
@@ -166,7 +216,9 @@ class MovingDetailsController extends Controller
             ], 422);
         }
 
-        $moving = MovingDetails::where('user_id',$user->id)->get();
+        $moving = MovingDetails::where('user_id',$user->id)
+                                ->with('userInfo:id,username,email,phone_number,first_name,last_name')
+                                ->get(['id','user_id','pickup_address','dropoff_address','pickup_date','pickup_time']);
 
         if(count($moving) > 0){
             return response()->json([
@@ -181,6 +233,54 @@ class MovingDetailsController extends Controller
                 'success' => false,
             ], 200);
         }
+    }
+
+
+    public function user_get_moving_details_by_id($id){
+        $userdetails = MovingDetails::find($id);
+        if($userdetails){
+            return response()->json([
+                'message'=>'Records Retrived Successfully',
+                'data'=> $userdetails,
+                'success'=> true
+            ],200);
+        } else{
+            return response()->json([
+                'message'=> 'There is no record against this user',
+                'data'=> [],
+                'success'=> false
+            ],200);
+        }
+
+
+
+    }
+
+    public function get_distance(Request $request){
+        $earthRadiusKm = 6371; // Earth's radius in kilometers
+        $earthRadiusMiles = 3959; //Earth's radius in miles
+
+        $pickuplat = $request->pickup_latitude;
+        $pickuplong = $request->pickup_longitude;
+        $dropofflat = $request->dropoff_latitude;
+        $dropofflong = $request->dropoff_longitude;
+
+        $distanceKm = $earthRadiusKm * acos(
+            cos(deg2rad($pickuplat)) * cos(deg2rad($dropofflat)) *
+            cos(deg2rad($pickuplong) - deg2rad($dropofflong)) +
+            sin(deg2rad($pickuplat)) * sin(deg2rad( $dropofflat))
+        );
+        $distanceMiles = $earthRadiusMiles * acos(
+            cos(deg2rad($pickuplat)) * cos(deg2rad($dropofflat)) *
+            cos(deg2rad($pickuplong) - deg2rad($dropofflong)) +
+            sin(deg2rad($pickuplat)) * sin(deg2rad( $dropofflat))
+        );
+
+        return response()->json([
+            'message' => 'distance has been calculated successfully',
+            'km' => $distanceKm,
+            'mile' => $distanceMiles
+        ],200);
     }
 
 

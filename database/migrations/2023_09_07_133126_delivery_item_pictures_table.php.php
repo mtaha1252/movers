@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('delivery_detail_id');
             $table->foreign('delivery_detail_id')->references('id')->on('delivery_details')->onDelete('cascade');
-            $table->string('item_picture_path'); 
+            $table->string('item_picture_path');
             $table->timestamps();
         });
     }

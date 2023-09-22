@@ -22,8 +22,10 @@ return new class extends Migration {
             $table->string('pickup_time')->nullable();
             $table->json('item_pictures');
             $table->text('detailed_description')->nullable();
-            $table->enum('pickup_property_type', ['apartment', 'condominium']);
+            $table->enum('pickup_property_type', ['apartment', 'condominium', 'house','semi detached house','detached house','town house condo','stacked town house','condo town house','open basement','close basement','villa','duplex','townhouse','farmhouse']);
+            $table->enum('dropoff_property_type',['apartment', 'condominium', 'house','semi detached house','detached house','town house condo','stacked town house','condo town house','open basement','close basement','villa','duplex','townhouse','farmhouse']);
             $table->string('pickup_unit_number')->nullable();
+            $table->string('dropoff_unit_number')->nullable();
             $table->integer('pickup_bedrooms')->nullable();
             $table->boolean('pickup_elevator')->default(false);
             $table->integer('pickup_flight_of_stairs')->nullable();
