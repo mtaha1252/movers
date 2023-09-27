@@ -32,7 +32,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     Route::middleware(['auth:sanctum', 'isAdmin'])->group(function () {
         Route::get('get_delivery_details',[DeliveryDetailController::class, 'get_delivery_details']);
         Route::get('get_moving_details',[MovingDetailsController::class, 'get_moving_details']);
-
-    });
+        Route::get('admin_get_delivery_details',[DeliveryDetailController::class,'admin_get_delivery_details']);
+        Route::get('admin_get_delivery_details_by_id/{id}',[DeliveryDetailController::class,'admin_get_delivery_details_by_id']);
+        Route::get('admin_get_moving_details',[MovingDetailsController::class,'admin_get_moving_details']);
+        Route::get('admin_get_moving_details_by_id/{id}',[MovingDetailsController::class,'admin_get_moving_details_by_id']);
+    }); 
 
 

@@ -20,4 +20,8 @@ class DeliveryItemPicture extends Model
         return $this->belongsTo(DeliveryDetail::class);
     }
 
+    public function getItemPicturePathAttribute($value){
+        return json_decode($value, true);
+    }
+
 }

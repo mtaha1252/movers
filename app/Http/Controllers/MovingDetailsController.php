@@ -256,6 +256,53 @@ class MovingDetailsController extends Controller
 
     }
 
+    public function admin_get_moving_details(){
+        $user = auth()->user();
+        if(!$user){
+            return response()->json([
+                'message'=> 'Invalid user.',
+            ], 422);
+        }
+
+        $moving = MovingDetails::where('user_id',$user->id)
+                                ->with('userInfo:id,username,email,phone_number,first_name,last_name')
+                                ->get(['id','user_id','pickup_address','dropoff_address','pickup_date','pickup_time']);
+
+        if(count($moving) > 0){
+            return response()->json([
+                'message'=> 'Records Retrived succesfully.',
+                'moving' => $moving,
+                'success' => true,
+            ], 200);
+        }else{
+            return response()->json([
+                'message'=> 'Records Retrived failed.',
+                'moving' => $moving,
+                'success' => false,
+            ], 200);
+        }
+
+    }
+
+    public function admin_get_moving_details_by_id($id){
+        $userdetails = MovingDetails::find($id);
+        if($userdetails){
+            return response()->json([
+                'message'=>'Records Retrived Successfully',
+                'data'=> $userdetails,
+                'success'=> true
+            ],200);
+        } else{
+            return response()->json([
+                'message'=> 'There is no record against this user',
+                'data'=> [],
+                'success'=> false
+            ],200);
+        }
+
+
+    }
+
     public function get_distance(Request $request){
         $earthRadiusKm = 6371; // Earth's radius in kilometers
         $earthRadiusMiles = 3959; //Earth's radius in miles

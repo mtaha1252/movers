@@ -14,7 +14,10 @@ class DeliveryDetail extends Model
         'dropoff_address',
         'pickup_date',
         'pickup_time',
-        'item_pictures',
+        'pickup1_pictures',
+        'pickup2_pictures',
+        'pickup3_pictures',
+        //'item_pictures',
         'detailed_description',
         'number_of_items',
         'heavey_weight_items',
@@ -78,5 +81,26 @@ class DeliveryDetail extends Model
     public function getDropoffLongitudeAttribute($value){
         return json_decode($value, true);
     }
+
+    public function getNumberOfItemsAttribute($value){
+        return json_decode($value, true);
+    }
+
+    public function getHeaveyWeightItemsAttribute($value){
+        return json_decode($value, true);
+    }
+
+    public function getPickup1PicturesAttribute($value){
+        return json_decode($value);
+    }
+
+    public function getPickup2PicturesAttribute($value){
+        return json_decode($value);
+    }
+
+    public function getPickup3PicturesAttribute($value){
+        return json_decode($value);
+    }
+
 
 }
