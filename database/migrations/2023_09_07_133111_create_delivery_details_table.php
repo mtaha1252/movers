@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::create('delivery_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->json('pickup_address')->nullable();
             $table->json('dropoff_address')->nullable();
             $table->string('pickup_date')->nullable();
             $table->string('pickup_time')->nullable();
             $table->text('detailed_description')->nullable();
             $table->string('number_of_items')->nullable();
-            $table->boolean('heavey_weight_items')->default(false);
+            $table->json('heavey_weight_items')->default(false);
             $table->enum('pickup_property_type', ['apartment', 'condominium', 'house','semi detached house','detached house','town house condo','stacked town house','condo town house','open basement','close basement','villa','duplex','townhouse','farmhouse']);
             $table->string('pickup_unit_number')->nullable();
             $table->string('pickup_flight_of_stairs')->nullable();
@@ -55,6 +55,11 @@ return new class extends Migration
      */
     public function down()
     {
+         
+        Schema::table('delivery_details', function (Blueprint $table) {
+            // Drop the foreign key constraint
+            $table->dropForeign(['user_id']);
+        });
         Schema::dropIfExists('delivery_details');
     }
 };
