@@ -14,7 +14,7 @@ return new class extends Migration {
     {
         Schema::create('moving_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('pickup_address')->nullable();
             $table->string('dropoff_address')->nullable();
 
@@ -53,6 +53,10 @@ return new class extends Migration {
      */
     public function down()
     {
+        Schema::table('moving_details', function (Blueprint $table) {
+            // Drop the foreign key constraint
+            $table->dropForeign(['user_id']);
+        });
         Schema::dropIfExists('moving_details');
     }
 };
