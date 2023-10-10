@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\DeliveryDetail;
+use App\Models\MovingDetails;
 use App\Models\DeliveryItemPicture;
 use Illuminate\Support\Facades\Validator;
 
@@ -14,7 +15,7 @@ class DeliveryDetailController extends Controller
 
     public function storeDeliveryDetails(Request $request)
     {
-
+  
         // Validation rules for the request data
         $validator = Validator::make($request->all(), [
             'pickup_address' => 'required|array|between:1,3',
@@ -32,6 +33,7 @@ class DeliveryDetailController extends Controller
             'pickup_elevator_timing_from' => 'required',
             'pickup_elevator_timing_to' => 'required',
             'dropoff_property_type' => ['required', 'in:apartment,condominium, house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse'],
+            'status' => ['required', 'in:cancelled,pending,approved'],
             'dropoff_unit_number' => 'required|integer',
             'dropoff_elevator' => 'boolean',
             'dropoff_elevator_timing_from' => 'required|string',
@@ -98,9 +100,10 @@ class DeliveryDetailController extends Controller
             $delivery->pickup_longitude = json_encode($request->pickup_longitude);
             $delivery->dropoff_latitude = json_encode($request->dropoff_latitude);
             $delivery->dropoff_longitude = json_encode($request->dropoff_longitude);
+            $delivery->status = $request->status;
 
 
-            $deliveries = [];
+           // $deliveries = [];
             // Handle item pictures
 
             if ($request->hasFile('pickup1_pictures')) {
@@ -151,14 +154,14 @@ class DeliveryDetailController extends Controller
                     $delivery->pickup3_pictures = json_encode($itemPictures);
             }
 
-            $deliveries[] = $delivery;
+            //$deliveries[] = $delivery;
             $delivery->save();
-        // }
+          
 
         return response()->json([
             'success' => true,
             'message' => 'Move details stored successfully.',
-            'data' => $deliveries,
+            'data' => $delivery,
         ], 200);
     }
     public function get_delivery_details()
@@ -178,9 +181,9 @@ class DeliveryDetailController extends Controller
             $userLongitude1 = $move->dropoff_longitude;
 
 
-            $count = count($userLatitude);
+           // $count = count($userLatitude);
 
-            for ($i = 0; $i < $count; $i++) {
+            for ($i = 0; $i < 3; $i++) {
 
                 $distanceKm = $earthRadiusKm * acos(
                     cos(deg2rad($userLatitude[$i])) * cos(deg2rad($userLatitude1[$i]))*
@@ -207,7 +210,7 @@ class DeliveryDetailController extends Controller
 
         if(!empty($movingWithDistance)){
             return response()->json([
-                'message'=> 'Get delivery details successfully.',
+                'message'=> 'Get delivery details Successfully.',
                 'deliveryDetails' => $movingWithDistance
             ], 200);
         }else{
@@ -226,16 +229,16 @@ class DeliveryDetailController extends Controller
             return response()->json([
                 'message'=> 'Invalid user.',
             ], 422);
-        }
-
+        }  
+        
         $delivery = DeliveryDetail::where('user_id', $user->id)
                                     //->with(['pictures:id,delivery_detail_id,item_picture_path'])
                                     ->with('userInfo:id,username,email,phone_number,first_name,last_name')
-                                    ->get(['id','user_id','pickup_address','dropoff_address','pickup_date','pickup_time']);
+                                    ->get(['id','user_id','pickup_address','dropoff_address','pickup_date','pickup_time','status']);
 
         if(count($delivery) > 0){
             return response()->json([
-                'message'=> 'Records Retrived succesfully.',
+                'message'=> 'Records Retrived Successfully.',
                 'delivery' => $delivery,
                 'success' => true,
             ], 200);
@@ -249,7 +252,7 @@ class DeliveryDetailController extends Controller
     }
 
     public function user_get_delivery_details_by_id($id){
-        $userdetails = DeliveryDetail::with(['pictures:id,delivery_detail_id,item_picture_path'])->find($id);
+        $userdetails = DeliveryDetail::find($id);
         if($userdetails){
             return response()->json([
                 'message'=>'Records Retrived Successfully',
@@ -267,12 +270,12 @@ class DeliveryDetailController extends Controller
 
 }
     public function admin_get_delivery_details(){
-        $delivery = DeliveryDetail::where('user_id','id')
-                                    ->with('userInfo:id,username,email,phone_number,first_name,last_name')
-                                    ->get(['id','user_id','pickup_address','dropoff_address','pickup_date','pickup_time']);
+         
+        $delivery = DeliveryDetail::with('userInfo:id,username,email,phone_number,first_name,last_name')
+                                    ->get(['id','user_id','pickup_address','dropoff_address','pickup_date','pickup_time','status']);
         if(count($delivery) > 0){
             return response()->json([
-                'message'=> 'Records Retrived succesfully.',
+                'message'=> 'Records Retrived successfully.',
                 'delivery' => $delivery,
                 'success' => true,
 
@@ -292,7 +295,7 @@ class DeliveryDetailController extends Controller
     }
 
     public function admin_get_delivery_details_by_id($id){
-        $delivery_details = DeliveryDetail::with('pictures:id,delivery_detail_id,item_picture_path')->find($id);
+        $delivery_details = DeliveryDetail::find($id);
         if($delivery_details){
             return response()->json([
                 'message'=>'Records Retrived Successfully',
@@ -307,7 +310,60 @@ class DeliveryDetailController extends Controller
             ],200);
         }
     }
+    public function admin_update_delivery_status(Request $request, $id){
+        
+         $delivery_status = DeliveryDetail::find($id);
 
+         if(!$delivery_status){
+
+            return response()->json([
+                'message'=> 'No such user found',
+                'success'=> false
+            ],200);
+
+         } else{
+
+            $delivery_status->update([
+                'status' => $request->status
+             ]);
+    
+             return response()->json([
+                'message' => 'status updated successfully',
+                'status' => $request->status,
+                'success' => true
+             ],200);
+              
+         }
+    }
+
+    public function shippment_history(){
+        $user = auth()->user();
+        if(!$user){
+            return response()->json([
+                'message' => 'Invalid User'
+            ],200);
+        }
+        $userMovingHistory = MovingDetails::where('user_id',$user->id)
+                                            ->get(['pickup_date','pickup_address','dropoff_address','status']);
+        $userDeliveryHistory = DeliveryDetail::where('user_id',$user->id)
+                                            ->get(['pickup_date','pickup_address','dropoff_address','status']);
+        if(count($userDeliveryHistory) > 0 || count($userMovingHistory) > 0){
+            return response()->json([
+                'message' => 'shippment history',
+                'delivery details' => $userDeliveryHistory,
+                'moving details' => $userMovingHistory,
+                'success' => true
+            ],200);
+        }else {
+            return response()->json([
+                'message' => 'no data for this user',
+                'data' => [],
+                'success' => false 
+            ],200);
+        }
+
+        
+    }
 
     /**
      * Display a listing of the resource.

@@ -35,6 +35,7 @@ return new class extends Migration {
             $table->integer('dropoff_flight_of_stairs')->nullable();
             $table->string('dropoff_elevator_timing_from')->nullable();
             $table->string('dropoff_elevator_timing_to')->nullable();
+            $table->enum('status', ['cancelled','approved','pending']);
             // Add columns for pickup and dropoff latitude and longitude
             $table->decimal('pickup_latitude', 10, 8)->nullable();
             $table->decimal('pickup_longitude', 11, 8)->nullable();

@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         Route::post('get_distance',[MovingDetailsController::class, 'get_distance']);
         Route::get('user_get_moving_details_by_id/{id}',[MovingDetailsController::class,'user_get_moving_details_by_id']);
         Route::get('user_get_delivery_details_by_id/{id}',[DeliveryDetailController::class,'user_get_delivery_details_by_id']);
+        Route::get('shippment_history',[DeliveryDetailController::class,'shippment_history']);
     });
     Route::middleware(['auth:sanctum', 'isAdmin'])->group(function () {
         Route::get('get_delivery_details',[DeliveryDetailController::class, 'get_delivery_details']);
@@ -36,6 +37,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         Route::get('admin_get_delivery_details_by_id/{id}',[DeliveryDetailController::class,'admin_get_delivery_details_by_id']);
         Route::get('admin_get_moving_details',[MovingDetailsController::class,'admin_get_moving_details']);
         Route::get('admin_get_moving_details_by_id/{id}',[MovingDetailsController::class,'admin_get_moving_details_by_id']);
+        Route::patch('admin_update_delivery_status/{id}',[DeliveryDetailController::class,'admin_update_delivery_status']);
+        Route::patch('admin_update_moving_status/{id}',[MovingDetailsController::class, 'admin_update_moving_status']);
     }); 
 
 

@@ -35,6 +35,7 @@ return new class extends Migration
             $table->text('dropoff_elevator_timing_from')->nullable();
             $table->text('dropoff_elevator_timing_to')->nullable();
             $table->string('dropoff_flight_of_stairs')->nullable();
+            $table->enum('status', ['cancelled','approved','pending']);
             $table->json('pickup1_pictures')->nullable();
             $table->json('pickup2_pictures')->nullable();
             $table->json('pickup3_pictures')->nullable();

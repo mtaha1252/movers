@@ -35,7 +35,8 @@ class DeliveryDetail extends Model
         'pickup_longitude',
         'dropoff_latitude',
         'dropoff_longitude',
-        'pickup_flight_of_stairs'
+        'pickup_flight_of_stairs',
+        'status'
     ];
 
 

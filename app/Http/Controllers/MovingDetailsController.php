@@ -22,6 +22,7 @@ class MovingDetailsController extends Controller
             'detailed_description' => 'required|string',
             'pickup_property_type' => 'required|string|in:apartment,condominium, house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse',
             'dropoff_property_type'=> 'required|string|in:apartment,condominium, house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse',
+            'status' => ['required', 'in:cancelled,pending,approved'],
             'pickup_bedrooms' => 'integer|nullable',
             'pickup_unit_number' => 'string|nullable',
             'dropoff_unit_number' => 'string|nullable',
@@ -133,7 +134,8 @@ class MovingDetailsController extends Controller
         //     ], 200);
 
         // }
-        $deliveries = [];
+
+        //$deliveries = [];
             // Handle item pictures
             if ($request->hasFile('item_pictures')) {
                 $itemPictures = [];
@@ -150,14 +152,14 @@ class MovingDetailsController extends Controller
                 $delivery->item_pictures = json_encode($itemPictures);
             }
 
-            $deliveries[] = $delivery;
+           // $deliveries[] = $delivery;
             $delivery->save();
         // }
 
         return response()->json([
             'success' => true,
             'message' => 'Move details stored successfully.',
-            'data' => $deliveries,
+            'data' => $delivery,
         ], 200);
 
 
@@ -196,7 +198,7 @@ class MovingDetailsController extends Controller
         }
         if(!empty($movingWithDistance)){
             return response()->json([
-                'message'=> 'Get distance succussfuly.',
+                'message'=> 'Get distance succesfully.',
                 'distance' => $movingWithDistance
             ], 200);
         }else{
@@ -218,7 +220,7 @@ class MovingDetailsController extends Controller
 
         $moving = MovingDetails::where('user_id',$user->id)
                                 ->with('userInfo:id,username,email,phone_number,first_name,last_name')
-                                ->get(['id','user_id','pickup_address','dropoff_address','pickup_date','pickup_time']);
+                                ->get(['id','user_id','pickup_address','dropoff_address','pickup_date','pickup_time','status']);
 
         if(count($moving) > 0){
             return response()->json([
@@ -257,16 +259,15 @@ class MovingDetailsController extends Controller
     }
 
     public function admin_get_moving_details(){
-        $user = auth()->user();
-        if(!$user){
-            return response()->json([
-                'message'=> 'Invalid user.',
-            ], 422);
-        }
+        // $user = auth()->user();
+        // if(!$user){
+        //     return response()->json([
+        //         'message'=> 'Invalid user.',
+        //     ], 422);
+        // }
 
-        $moving = MovingDetails::where('user_id',$user->id)
-                                ->with('userInfo:id,username,email,phone_number,first_name,last_name')
-                                ->get(['id','user_id','pickup_address','dropoff_address','pickup_date','pickup_time']);
+        $moving = MovingDetails::with('userInfo:id,username,email,phone_number,first_name,last_name')
+                                ->get(['id','user_id','pickup_address','dropoff_address','pickup_date','pickup_time','status']);
 
         if(count($moving) > 0){
             return response()->json([
@@ -328,6 +329,30 @@ class MovingDetailsController extends Controller
             'km' => $distanceKm,
             'mile' => $distanceMiles
         ],200);
+    }
+
+    public function admin_update_moving_status(Request $request, $id){
+
+        $moving_status = MovingDetails::find($id);
+        if(!$moving_status){
+
+            return response()->json([
+                'message'=> 'No such user found',
+                'success'=> false
+            ]);
+
+        } else{
+
+            $moving_status->update([
+                'status' => $request->status,
+            ]);
+            return response()->json([
+                'message' => 'moving status updated successfully',
+                'status' => $request->status,
+                'success' => true
+            ],200);
+        }
+        
     }
 
 

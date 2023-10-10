@@ -13,7 +13,8 @@ class MovingDetails extends Model
         'pickup_flight_of_stairs', 'pickup_elevator_timing_from',
         'pickup_elevator_timing_to', 'dropoff_elevator',
         'dropoff_flight_of_stairs', 'dropoff_elevator_timing_from',
-        'dropoff_elevator_timing_to','pickup_latitude','pickup_longitude','dropoff_latitude','dropoff_longitude'
+        'dropoff_elevator_timing_to','pickup_latitude','pickup_longitude','dropoff_latitude','dropoff_longitude',
+        'status'
     ];
 
     // Add any additional methods or relationships here

@@ -22,7 +22,9 @@ class UserController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'username' => 'required',
+           // 'username' => 'required',
+            'first_name' => 'required|string',
+            'last_name' => 'required|string',
             'phone_number' => 'required|unique:users',
             'email' => 'required|email|unique:users',
             'user_type' => 'required|in:user',
@@ -42,12 +44,15 @@ class UserController extends Controller
         // Create a new user
         // You'll need to define your User model and its properties
         $user = new User();
-        $user->username = $request->input('username');
+        //$user->username = $request->input('username');
+        $user->first_name = $request->input('first_name');
+        $user->last_name = $request->input('last_name');
+        $user->username = $request->input('first_name') . " " . $request->input('last_name');
         $user->phone_number = $request->input('phone_number');
         $user->email = $request->input('email');
         $user->user_type = $request->input('user_type');
         $user->otp_code = $otp;
-        $user->save();
+       
 
         if ($request->hasFile('profile_image')) {
             $filename = 'users/' . $user->id . '';
@@ -55,7 +60,7 @@ class UserController extends Controller
             $path = $image->store($filename, 'public');
             $user->profile_image = 'storage/' . $path; // Added a '/' after 'storage'
         }
-
+        $user->save();
         Mail::to($user->email)->send(new OtpMail($otp));
         // Generate a token for the user
         $checkphone = User::where('phone_number', '=', $request->phone_number)->first();
@@ -262,7 +267,7 @@ class UserController extends Controller
         $this->sendSMS($request, $newOtp, $message);
 
         // Update the user's password
-        $user->password = Hash::make($newOtp);
+        $user->password = Hash::make($newOtp);  // $request->password 
 
         if ($user->save()) {
             return response()->json([
@@ -276,7 +281,9 @@ class UserController extends Controller
 
     public function editProfile(Request $request)
     {
-        $user_id = $request->id;
+       // $user_id = $request->id;
+        $user = auth()->user();
+        $user_id = $user->id;
 
         $validator = Validator::make($request->all(), [
             'profile_image' => 'required',
