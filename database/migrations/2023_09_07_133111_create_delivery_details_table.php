@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('pickup_time')->nullable();
             $table->text('detailed_description')->nullable();
             $table->string('number_of_items')->nullable();
-            $table->json('heavey_weight_items')->default(false);
+            $table->json('heavey_weight_items')->nullable();
             $table->enum('pickup_property_type', ['apartment', 'condominium', 'house','semi detached house','detached house','town house condo','stacked town house','condo town house','open basement','close basement','villa','duplex','townhouse','farmhouse']);
             $table->string('pickup_unit_number')->nullable();
             $table->string('pickup_flight_of_stairs')->nullable();
