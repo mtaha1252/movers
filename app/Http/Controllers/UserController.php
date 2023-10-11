@@ -324,6 +324,7 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Profile updated successfully.',
+            'data' => $user
         ], 200);
     }
 
