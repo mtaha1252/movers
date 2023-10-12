@@ -290,7 +290,7 @@ class UserController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'phone_number' => 'required',
-            'email' => 'required|email',
+            'email' => 'required|email|unique:users', 
         ]);
 
         if ($validator->fails()) {
@@ -310,7 +310,7 @@ class UserController extends Controller
         if ($request->hasFile('profile_image')) {
             $profileImagePath = $request->file('profile_image')->store('profiles', 'public');
             // Store the relative path in the database
-            $user->profile_image = $profileImagePath;
+            $user->profile_image = 'storage/'. $profileImagePath;
         }
 
         // Update user profile information based on the request
