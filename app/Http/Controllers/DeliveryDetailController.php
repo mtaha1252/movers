@@ -25,19 +25,20 @@ class DeliveryDetailController extends Controller
             'detailed_description' => ['required','string'],
             'number_of_items' => ['required','array'],
             'heavey_weight_items' => ['required','array','in:0,1'],
-            'pickup_property_type' => ['required', 'in:apartment,condominium, house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse'],
-            'pickup_unit_number' => 'nullable|string',
-            'pickup_elevator' => 'boolean',
-            // 'pickup_flight_of_stairs' => 'null',
-            // 'dropoff_flight_of_stairs' => 'required',
-            'pickup_elevator_timing_from' => 'required',
-            'pickup_elevator_timing_to' => 'required',
-            'dropoff_property_type' => ['required', 'in:apartment,condominium, house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse'],
+            'pickup_property_type' => ['required','array', 'in:apartment,condominium,house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse'],
+            'pickup_unit_number' => 'array|nullable',
+            //'pickup_elevator' => ['array'],
+           'pickup_elevator' => ['array','in:0,1'],
+            'dropoff_elevator' => ['array','in:0,1'],
+            'pickup_flight_of_stairs' => 'required_if:pickup_elevator,0|nullable',
+            'dropoff_flight_of_stairs' => 'required_if:dropoff_elevator,0|nullable',
+            'pickup_elevator_timing_from' => 'required_if:pickup_elevator,1|nullable',
+            'pickup_elevator_timing_to' => 'required_if:pickup_elevator,1|nullable',
+            'dropoff_property_type' => ['required','array', 'in:apartment,condominium,house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse'],
             'status' => ['required', 'in:cancelled,pending,approved'],
-            'dropoff_unit_number' => 'required|integer',
-            'dropoff_elevator' => 'boolean',
-            'dropoff_elevator_timing_from' => 'required|string',
-            'dropoff_elevator_timing_to' => 'required|string',
+            'dropoff_unit_number' => 'array|nullable',
+            'dropoff_elevator_timing_from' => 'required_if:dropoff_elevator,1|nullable',
+            'dropoff_elevator_timing_to' => 'required_if:dropoff_elevator,1|nullable',
             'pickup1_pictures.*'=> 'required|nullable',
             'pickup2_pictures.*'=> 'required|nullable',
             'pickup3_pictures.*'=> 'required|nullable',
@@ -72,28 +73,32 @@ class DeliveryDetailController extends Controller
             $delivery->detailed_description = $request->detailed_description;
             $delivery->number_of_items = json_encode($request->number_of_items);
             $delivery->heavey_weight_items = json_encode($request->heavey_weight_items);
-            $delivery->pickup_property_type = $request->pickup_property_type;
+            $delivery->pickup_property_type = json_encode($request->pickup_property_type);
             if ($delivery->pickup_property_type === 'apartment' || $delivery->pickup_property_type === 'condominium') {
-                $delivery->pickup_unit_number = $request->pickup_unit_number;
+                $delivery->pickup_unit_number = json_encode($request->pickup_unit_number);
             }
-            $delivery->pickup_elevator = $request->pickup_elevator;
+            $delivery->pickup_elevator = json_encode($request->pickup_elevator);
             // dd($request->pickup_elevator);
-            if ($request->pickup_elevator == 0) {
-                $delivery->pickup_flight_of_stairs = $request->pickup_flight_of_stairs;
-            } else {
-                $delivery->pickup_elevator_timing_from = $request->pickup_elevator_timing_from;
-                $delivery->pickup_elevator_timing_to = $request->pickup_elevator_timing_to;
+            if ($request->pickup_elevator == is_numeric("0")) {
+                $delivery->pickup_flight_of_stairs = json_encode($request->pickup_flight_of_stairs);
+            } 
+            if($request->pickup_elevator == is_numeric("1")) 
+            {
+                $delivery->pickup_elevator_timing_from = json_encode($request->pickup_elevator_timing_from);
+                $delivery->pickup_elevator_timing_to = json_encode($request->pickup_elevator_timing_to);
             }
-            $delivery->dropoff_property_type = $request->dropoff_property_type;
+            $delivery->dropoff_property_type = json_encode($request->dropoff_property_type);
             if ($delivery->dropoff_property_type === 'apartment' || $delivery->dropoff_property_type === 'condominium') {
-                $delivery->dropoff_unit_number = $request->dropoff_unit_number;
+                $delivery->dropoff_unit_number = json_encode($request->dropoff_unit_number);
             }
-            $delivery->dropoff_elevator = $request->dropoff_elevator;
-            if ($request->dropoff_elevator == 0) {
-                $delivery->dropoff_flight_of_stairs = $request->dropoff_flight_of_stairs;
-            } else {
-                $delivery->dropoff_elevator_timing_from = $request->dropoff_elevator_timing_from;
-                $delivery->dropoff_elevator_timing_to = $request->dropoff_elevator_timing_to;
+            $delivery->dropoff_elevator = json_encode($request->dropoff_elevator);
+            if ($request->dropoff_elevator == is_numeric("0")) {
+                $delivery->dropoff_flight_of_stairs = json_encode($request->dropoff_flight_of_stairs);
+            } 
+            if($request->dropoff_elevator == is_numeric("1")) 
+            {
+                $delivery->dropoff_elevator_timing_from = json_encode($request->dropoff_elevator_timing_from);
+                $delivery->dropoff_elevator_timing_to = json_encode($request->dropoff_elevator_timing_to);
             }
 
             $delivery->pickup_latitude = json_encode($request->pickup_latitude);

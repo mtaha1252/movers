@@ -102,6 +102,42 @@ class DeliveryDetail extends Model
     public function getPickup3PicturesAttribute($value){
         return json_decode($value);
     }
+    public function getPickupPropertyTypeAttribute($value){
+        return json_decode($value);
+    }
+    public function getPickupUnitNumberAttribute($value){
+        return json_decode($value);
+    }
+    public function getPickupElevatorAttribute($value){
+        return json_decode($value);
+    }
+    public function getPickupElevatorTimingFromAttribute($value){
+        return json_decode($value);
+    }
+    public function getPickupElevatorTimingToAttribute($value){
+        return json_decode($value);
+    }
+    public function getDropoffPropertyTypeAttribute($value){
+        return json_decode($value);
+    }
+    public function getDropoffUnitNumberAttribute($value){
+        return json_decode($value);
+    }
+    public function getDropoffElevatorAttribute($value){
+        return json_decode($value);
+    }
+    public function getDropoffElevatorTimingFromAttribute($value){
+        return json_decode($value);
+    }
+    public function getDropoffElevatorTimingToAttribute($value){
+        return json_decode($value);
+    }
+    public function getPickupFlightOfStairsAttribute($value){
+        return json_decode($value);
+    }
+    public function getDropoffFlightOfStairsAttribute($value){
+        return json_decode($value);
+    }
 
 
 }
