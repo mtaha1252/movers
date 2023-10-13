@@ -61,7 +61,7 @@ class UserController extends Controller
             $user->profile_image = 'public/storage/' . $path; // Added a '/' after 'storage'
         }
         $user->save();
-        // Mail::to($user->email)->send(new OtpMail($otp));
+        Mail::to($user->email)->send(new OtpMail($otp));
         // Generate a token for the user
         $checkphone = User::where('phone_number', '=', $request->phone_number)->first();
 
