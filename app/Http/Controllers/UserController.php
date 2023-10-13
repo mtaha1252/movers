@@ -55,7 +55,7 @@ class UserController extends Controller
        
 
         if ($request->hasFile('profile_image')) {
-            $filename = 'users/' . $user->id . '';
+            $filename = 'users/' . $user->id;
             $image = $request->file('profile_image');
             $path = $image->store($filename, 'public');
             $user->profile_image = 'storage/' . $path; // Added a '/' after 'storage'
