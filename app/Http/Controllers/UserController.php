@@ -58,7 +58,7 @@ class UserController extends Controller
             $filename = 'users';
             $image = $request->file('profile_image');
             $path = $image->store($filename, 'public');
-            $user->profile_image = 'storage/' . $path; // Added a '/' after 'storage'
+            $user->profile_image = 'public/storage/' . $path; // Added a '/' after 'storage'
         }
         $user->save();
         // Mail::to($user->email)->send(new OtpMail($otp));
