@@ -55,10 +55,10 @@ class UserController extends Controller
        
 
         if ($request->hasFile('profile_image')) {
-            $filename = 'users/' . $user->id . '';
+            $filename = 'users';
             $image = $request->file('profile_image');
             $path = $image->store($filename, 'public');
-            $user->profile_image = 'storage/' . $path; // Added a '/' after 'storage'
+            $user->profile_image = 'public/storage/' . $path; // Added a '/' after 'storage'
         }
         $user->save();
         Mail::to($user->email)->send(new OtpMail($otp));
@@ -324,7 +324,7 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Profile updated successfully.',
-            'data' => $user
+            'userData' => $user,
         ], 200);
     }
 
