@@ -290,7 +290,7 @@ class UserController extends Controller
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'phone_number' => 'required',
-            'email' => 'required|email|unique:users', 
+            'email' => 'required|email', 
         ]);
 
         if ($validator->fails()) {
@@ -319,6 +319,7 @@ class UserController extends Controller
             'last_name' => $request->input('last_name'),
             'phone_number' => $request->input('phone_number'),
             'email' => $request->input('email'),
+            'username' => $request->input('first_name')." ".$request->input('last_name')
         ]);
 
         return response()->json([
