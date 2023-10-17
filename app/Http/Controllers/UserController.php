@@ -353,6 +353,14 @@ class UserController extends Controller
         }
     }
 
+    public function logout(){
+        auth()->user()->tokens()->delete();
+        return response()->json([
+            'message' => 'User has been logout successfully',
+            'status' => true
+        ],200);
+    }
+
     public function storeMoveDetails(Request $request)
     {
         // Validation rules for the request data
