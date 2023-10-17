@@ -307,10 +307,16 @@ class UserController extends Controller
         }
 
         // Assuming you have a file input named 'profile_image' in your form
+        // if ($request->hasFile('profile_image')) {
+        //     $profileImagePath = $request->file('profile_image')->store('profiles', 'public');
+        //     // Store the relative path in the database
+        //     $user->profile_image = 'storage/'. $profileImagePath;
+        // }
         if ($request->hasFile('profile_image')) {
-            $profileImagePath = $request->file('profile_image')->store('profiles', 'public');
-            // Store the relative path in the database
-            $user->profile_image = 'storage/'. $profileImagePath;
+            $filename = 'users';
+            $image = $request->file('profile_image');
+            $path = $image->store($filename, 'public');
+            $user->profile_image = 'public/storage/' . $path; // Added a '/' after 'storage'
         }
 
         // Update user profile information based on the request
