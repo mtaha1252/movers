@@ -20,8 +20,8 @@ class MovingDetailsController extends Controller
             'pickup_time' => 'required',
             'item_pictures.*' => 'required|image|mimes:jpeg,png,jpg|max:10240',
             'detailed_description' => 'required|string',
-            'pickup_property_type' => 'required|string|in:apartment,condominium,house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse',
-            'dropoff_property_type'=> 'required|string|in:apartment,condominium,house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse',
+            'pickup_property_type' => 'required|string|in:Apartment,Condominium,Semi Detached House,Detached House,Town House Condo,Stacked Town House,Open Basement,Duplex,TownHouse',
+            'dropoff_property_type'=> 'required|string|in:Apartment,Condominium,Semi Detached House,Detached House,Town House Condo,Stacked Town House,Open Basement,Duplex,TownHouse',
             'status' => ['required', 'in:cancelled,pending,approved'],
             'pickup_bedrooms' => 'integer|nullable',
             'pickup_unit_number' => 'string|nullable',
@@ -56,7 +56,7 @@ class MovingDetailsController extends Controller
         $delivery = new MovingDetails($validatedData);
         $delivery->user_id = $user->id;
         // Handle conditional logic based on 'pickup_property_type' and 'pickup_elevator'
-        if ($delivery->pickup_property_type === 'apartment' || $delivery->pickup_property_type === 'condominium') {
+        if ($delivery->pickup_property_type === 'Apartment' || $delivery->pickup_property_type === 'Condominium') {
             // Handle fields related to apartments and condominiums
             $delivery->pickup_bedrooms = $validatedData['pickup_bedrooms'];
             $delivery->pickup_unit_number = $validatedData['pickup_unit_number'];
@@ -73,7 +73,7 @@ class MovingDetailsController extends Controller
             $delivery->pickup_elevator_timing_to = $validatedData['pickup_elevator_timing_to'];
         }
 
-        if ($delivery->dropoff_property_type === 'apartment' || $delivery->dropoff_property_type === 'condominium') {
+        if ($delivery->dropoff_property_type === 'Apartment' || $delivery->dropoff_property_type === 'Condominium') {
             // Handle fields related to apartments and condominiums
             $delivery->dropoff_unit_number = $validatedData['dropoff_unit_number'];
         } else {

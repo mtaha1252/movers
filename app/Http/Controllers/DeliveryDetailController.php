@@ -25,7 +25,7 @@ class DeliveryDetailController extends Controller
             'detailed_description' => ['required','string'],
             'number_of_items' => ['required','array'],
             'heavey_weight_items' => ['required','array','in:0,1'],
-            'pickup_property_type' => ['required','array', 'in:apartment,condominium,house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse'],
+            'pickup_property_type' => ['required','array', 'in:Apartment,Condominium,Semi Detached House,Detached House,Town House Condo,Stacked Town House,Open Basement,Duplex,TownHouse'],
             'pickup_unit_number' => 'array|nullable',
             //'pickup_elevator' => ['array'],
            'pickup_elevator' => ['array','in:0,1'],
@@ -34,7 +34,7 @@ class DeliveryDetailController extends Controller
             'dropoff_flight_of_stairs' => 'required_if:dropoff_elevator,0|nullable',
             'pickup_elevator_timing_from' => 'required_if:pickup_elevator,1|nullable',
             'pickup_elevator_timing_to' => 'required_if:pickup_elevator,1|nullable',
-            'dropoff_property_type' => ['required','array', 'in:apartment,condominium,house,semi detached house,detached house,town house condo,stacked town house,condo town house,open basement,close basement,villa,duplex,townhouse,farmhouse'],
+            'dropoff_property_type' => ['required','array', 'in:Apartment,Condominium,Semi Detached House,Detached House,Town House Condo,Stacked Town House,Open Basement,Duplex,TownHouse'],
             'status' => ['required', 'in:cancelled,pending,approved'],
             'dropoff_unit_number' => 'array|nullable',
             'dropoff_elevator_timing_from' => 'required_if:dropoff_elevator,1|nullable',
@@ -74,7 +74,7 @@ class DeliveryDetailController extends Controller
             $delivery->number_of_items = json_encode($request->number_of_items);
             $delivery->heavey_weight_items = json_encode($request->heavey_weight_items);
             $delivery->pickup_property_type = json_encode($request->pickup_property_type);
-            if ($delivery->pickup_property_type === 'apartment' || $delivery->pickup_property_type === 'condominium') {
+            if ($delivery->pickup_property_type === 'Apartment' || $delivery->pickup_property_type === 'Condominium') {
                 $delivery->pickup_unit_number = json_encode($request->pickup_unit_number);
             }
             $delivery->pickup_elevator = json_encode($request->pickup_elevator);
@@ -88,7 +88,7 @@ class DeliveryDetailController extends Controller
                 $delivery->pickup_elevator_timing_to = json_encode($request->pickup_elevator_timing_to);
             }
             $delivery->dropoff_property_type = json_encode($request->dropoff_property_type);
-            if ($delivery->dropoff_property_type === 'apartment' || $delivery->dropoff_property_type === 'condominium') {
+            if ($delivery->dropoff_property_type === 'Apartment' || $delivery->dropoff_property_type === 'Condominium') {
                 $delivery->dropoff_unit_number = json_encode($request->dropoff_unit_number);
             }
             $delivery->dropoff_elevator = json_encode($request->dropoff_elevator);
