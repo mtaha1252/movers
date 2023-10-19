@@ -74,8 +74,14 @@ class DeliveryDetailController extends Controller
             $delivery->number_of_items = json_encode($request->number_of_items);
             $delivery->heavey_weight_items = json_encode($request->heavey_weight_items);
             $delivery->pickup_property_type = json_encode($request->pickup_property_type);
-            if ($delivery->pickup_property_type === 'Apartment' || $delivery->pickup_property_type === 'Condominium') {
-                $delivery->pickup_unit_number = json_encode($request->pickup_unit_number);
+            $pickup_count = count($delivery->pickup_property_type);
+            
+            for($i = 0; $i < $pickup_count; $i++){
+                if ($delivery->pickup_property_type[$i] === 'Apartment' || $delivery->pickup_property_type[$i] === 'Condominium' || $delivery->pickup_property_type[$i] === 'Stacked town house' || $delivery->pickup_property_type[$i] === 'Townhouse') {
+                    $delivery->pickup_unit_number = json_encode($request->pickup_unit_number);
+
+            }
+            
             }
             $delivery->pickup_elevator = json_encode($request->pickup_elevator);
             // dd($request->pickup_elevator);
@@ -88,9 +94,13 @@ class DeliveryDetailController extends Controller
                 $delivery->pickup_elevator_timing_to = json_encode($request->pickup_elevator_timing_to);
             }
             $delivery->dropoff_property_type = json_encode($request->dropoff_property_type);
-            if ($delivery->dropoff_property_type === 'Apartment' || $delivery->dropoff_property_type === 'Condominium') {
-                $delivery->dropoff_unit_number = json_encode($request->dropoff_unit_number);
+            $count_dropoff = count($delivery->dropoff_property_type);
+            for($i = 0; $i < $count_dropoff; $i++){
+                if ($delivery->dropoff_property_type[$i] === 'Apartment' || $delivery->dropoff_property_type[$i] === 'Condominium' || $delivery->dropoff_property_type[$i] === 'Stacked town house' || $delivery->dropoff_property_type[$i] === 'Townhouse') {
+                    $delivery->dropoff_unit_number = json_encode($request->dropoff_unit_number);
+                }
             }
+            
             $delivery->dropoff_elevator = json_encode($request->dropoff_elevator);
             if ($request->dropoff_elevator == is_numeric("0")) {
                 $delivery->dropoff_flight_of_stairs = json_encode($request->dropoff_flight_of_stairs);
