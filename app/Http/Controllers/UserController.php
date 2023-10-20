@@ -47,7 +47,8 @@ class UserController extends Controller
         //$user->username = $request->input('username');
         $user->first_name = $request->input('first_name');
         $user->last_name = $request->input('last_name');
-        $user->username = $request->input('first_name') . " " . $request->input('last_name');
+        $user->full_name = $request->input('first_name') . " " . $request->input('last_name');
+        $user->username = $request->input('first_name')."_".rand(1000,9999);
         $user->phone_number = $request->input('phone_number');
         $user->email = $request->input('email');
         $user->user_type = $request->input('user_type');

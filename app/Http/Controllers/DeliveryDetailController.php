@@ -175,7 +175,7 @@ class DeliveryDetailController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Move details stored successfully.',
+            'message' => 'Delivery details stored successfully.',
             'data' => $delivery,
         ], 200);
     }
