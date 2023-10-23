@@ -287,7 +287,7 @@ class UserController extends Controller
         $user_id = $user->id;
 
         $validator = Validator::make($request->all(), [
-            'profile_image' => 'required',
+            'profile_image' => 'nullable',
             'first_name' => 'required|string',
             'last_name' => 'required|string',
             'phone_number' => 'required',
@@ -326,7 +326,7 @@ class UserController extends Controller
             'last_name' => $request->input('last_name'),
             'phone_number' => $request->input('phone_number'),
             'email' => $request->input('email'),
-            'username' => $request->input('first_name')." ".$request->input('last_name')
+            'full_name' => $request->input('first_name')." ".$request->input('last_name')
         ]);
 
         return response()->json([
