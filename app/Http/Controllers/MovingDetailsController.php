@@ -224,15 +224,15 @@ class MovingDetailsController extends Controller
 
         if(count($moving) > 0){
             return response()->json([
-                'message'=> 'Records Retrived succesfully.',
+                'message'=> 'Records reterived successfully.',
                 'moving' => $moving,
                 'success' => true,
             ], 200);
         }else{
             return response()->json([
-                'message'=> 'Records Retrived failed.',
-                'moving' => $moving,
-                'success' => false,
+                'message'=> 'No records available.',
+                'moving' => [],
+                'success' => true,
             ], 200);
         }
     }
@@ -242,15 +242,15 @@ class MovingDetailsController extends Controller
         $userdetails = MovingDetails::find($id);
         if($userdetails){
             return response()->json([
-                'message'=>'Records Retrived Successfully',
+                'message'=>'Records reterived successfully',
                 'data'=> $userdetails,
                 'success'=> true
             ],200);
         } else{
             return response()->json([
-                'message'=> 'There is no record against this user',
+                'message'=> 'No records available',
                 'data'=> [],
-                'success'=> false
+                'success'=> true
             ],200);
         }
 
@@ -271,15 +271,15 @@ class MovingDetailsController extends Controller
 
         if(count($moving) > 0){
             return response()->json([
-                'message'=> 'Records Retrived succesfully.',
+                'message'=> 'Records reterived succesfully.',
                 'moving' => $moving,
                 'success' => true,
             ], 200);
         }else{
             return response()->json([
-                'message'=> 'Records Retrived failed.',
-                'moving' => $moving,
-                'success' => false,
+                'message'=> 'No records available',
+                'moving' => [],
+                'success' => true,
             ], 200);
         }
 
@@ -289,15 +289,15 @@ class MovingDetailsController extends Controller
         $userdetails = MovingDetails::find($id);
         if($userdetails){
             return response()->json([
-                'message'=>'Records Retrived Successfully',
+                'message'=>'Records reterived Successfully',
                 'data'=> $userdetails,
                 'success'=> true
             ],200);
         } else{
             return response()->json([
-                'message'=> 'There is no record against this user',
+                'message'=> 'No records available',
                 'data'=> [],
-                'success'=> false
+                'success'=> true
             ],200);
         }
 
