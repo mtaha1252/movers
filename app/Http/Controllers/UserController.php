@@ -59,7 +59,7 @@ class UserController extends Controller
             $filename = 'users';
             $image = $request->file('profile_image');
             $path = $image->store($filename, 'public');
-            $user->profile_image = 'public/storage/' . $path; // Added a '/' after 'storage'
+            $user->profile_image = 'storage/' . $path; // Added a '/' after 'storage'
         }
         $user->save();
         Mail::to($user->email)->send(new OtpMail($otp));
@@ -161,10 +161,6 @@ class UserController extends Controller
         // Generate a new OTP
         $newOtp = $this->generateFourDigitNumber(); // Implement this function
 
-        // Update the user's OTP in the database
-        $user->otp_code = $newOtp;
-        $user->save();
-
         // Send the new OTP to the user via email
         Mail::to($user->email)->send(new OtpMail($newOtp));
 
@@ -172,6 +168,9 @@ class UserController extends Controller
         $message = $user->username . " Your verification code is: $newOtp. Please enter this code to verify your account.";
         $this->sendSMS($request, $newOtp, $message);
 
+        // Update the user's OTP in the database
+        $user->otp_code = $newOtp;
+        $user->save();
         return response()->json([
             'success' => true,
             'message' => 'New OTP sent successfully.'
@@ -268,7 +267,7 @@ class UserController extends Controller
         $this->sendSMS($request, $newOtp, $message);
 
         // Update the user's password
-        $user->password = Hash::make($newOtp);  // $request->password 
+        $user->otp_code = $newOtp;  // $request->password 
 
         if ($user->save()) {
             return response()->json([
@@ -317,7 +316,7 @@ class UserController extends Controller
             $filename = 'users';
             $image = $request->file('profile_image');
             $path = $image->store($filename, 'public');
-            $user->profile_image = 'public/storage/' . $path; // Added a '/' after 'storage'
+            $user->profile_image = 'storage/' . $path; // Added a '/' after 'storage'
         }
 
         // Update user profile information based on the request
