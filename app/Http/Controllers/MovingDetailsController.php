@@ -239,7 +239,8 @@ class MovingDetailsController extends Controller
 
 
     public function user_get_moving_details_by_id($id){
-        $userdetails = MovingDetails::find($id);
+        $userdetails = MovingDetails::with('userInfo:id,full_name,profile_image,email')->find($id);
+  
         if($userdetails){
             return response()->json([
                 'message'=>'Records reterived successfully',
