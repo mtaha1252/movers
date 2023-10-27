@@ -59,7 +59,7 @@ class UserController extends Controller
             $filename = 'users';
             $image = $request->file('profile_image');
             $path = $image->store($filename, 'public');
-            $user->profile_image = 'storage/' . $path; // Added a '/' after 'storage'
+            $user->profile_image = 'public/storage/' . $path; // Added a '/' after 'storage'
         }
         $user->save();
         Mail::to($user->email)->send(new OtpMail($otp));
@@ -267,7 +267,7 @@ class UserController extends Controller
         $this->sendSMS($request, $newOtp, $message);
 
         // Update the user's password
-        $user->otp_code = $newOtp;  // $request->password 
+        $user->otp = $newOtp;  // $request->password 
 
         if ($user->save()) {
             return response()->json([
@@ -316,7 +316,7 @@ class UserController extends Controller
             $filename = 'users';
             $image = $request->file('profile_image');
             $path = $image->store($filename, 'public');
-            $user->profile_image = 'storage/' . $path; // Added a '/' after 'storage'
+            $user->profile_image = 'public/storage/' . $path; // Added a '/' after 'storage'
         }
 
         // Update user profile information based on the request
