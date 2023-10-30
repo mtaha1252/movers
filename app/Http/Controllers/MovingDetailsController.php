@@ -144,7 +144,7 @@ class MovingDetailsController extends Controller
 
                     $filename = 'movingImages';
                     $path = $file->store($filename, 'public');
-                    $itemPictures[] = 'storage/' . $path; // Added a '/' after 'storage'
+                    $itemPictures[] = 'public/storage/' . $path; // Added a '/' after 'storage'
 
                 }
 
@@ -224,7 +224,7 @@ class MovingDetailsController extends Controller
 
         if(count($moving) > 0){
             return response()->json([
-                'message'=> 'Records reterived successfully.',
+                'message'=> 'Records retrieved successfully.',
                 'moving' => $moving,
                 'success' => true,
             ], 200);
@@ -243,7 +243,7 @@ class MovingDetailsController extends Controller
   
         if($userdetails){
             return response()->json([
-                'message'=>'Records reterived successfully',
+                'message'=>'Records retrieved successfully',
                 'data'=> $userdetails,
                 'success'=> true
             ],200);
@@ -272,7 +272,7 @@ class MovingDetailsController extends Controller
 
         if(count($moving) > 0){
             return response()->json([
-                'message'=> 'Records reterived succesfully.',
+                'message'=> 'Records retrieved succesfully.',
                 'moving' => $moving,
                 'success' => true,
             ], 200);
@@ -290,7 +290,7 @@ class MovingDetailsController extends Controller
         $userdetails = MovingDetails::find($id);
         if($userdetails){
             return response()->json([
-                'message'=>'Records reterived Successfully',
+                'message'=>'Records retrieved Successfully',
                 'data'=> $userdetails,
                 'success'=> true
             ],200);
@@ -355,6 +355,33 @@ class MovingDetailsController extends Controller
         }
         
     }
+    // public function delete_moving_history(Request $request){
+    //     $validator = Validator::make($request->all(), [
+    //         'id' => 'required',
+    //     ]);
+    //     if($validator->fails()){
+    //         return response()->json([
+    //             'message' => $validator->messages()->first(),
+    //         ],422);
+    //     }
+    //     $order_id = $request->id;
+
+    //     $record = MovingDetails::where('id',$order_id)->first();
+    //     if($record === null){
+    //         return response()->json([
+    //             'message' => 'No such record found',
+    //             'success' => true
+    //         ],200);
+    //     }
+    //     else{
+    //         $record->delete();
+    //         return response()->json([
+    //            'message' => 'Record has been deleted successfully',
+    //            'success' => true,
+    //         ],200);
+    //     }
+        
+    // }
 
 
 }

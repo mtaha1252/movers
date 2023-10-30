@@ -467,4 +467,24 @@ class UserController extends Controller
         }
 
     }
+
+
+    public function getUserData(){
+        $users = auth()->user();
+        $user_id = $users->id;
+        $user = User::find($user_id);
+        if(!$user){
+            return response()->json([
+                'message' => 'Invalid user',
+                'success' => true
+            ],200);
+        }else{
+            return response()->json([
+                'message' => 'User information reterived successfully.',
+                'success' => true,
+                'user' => $user
+
+            ],200);
+        }
+    }
 }

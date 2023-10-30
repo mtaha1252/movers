@@ -138,7 +138,7 @@ class DeliveryDetailController extends Controller
 
                     $filename = 'deliveryImages';
                     $path = $file->store($filename, 'public');
-                    $itemPictures[] = 'storage/' . $path; // Added a '/' after 'storage'
+                    $itemPictures[] = 'public/storage/' . $path; // Added a '/' after 'storage'
 
                 }
                     // Attach uploaded picture file names to the delivery instance
@@ -154,7 +154,7 @@ class DeliveryDetailController extends Controller
 
                     $filename = 'deliveryImages';
                     $path = $file->store($filename, 'public');
-                    $itemPictures[] = 'storage/' . $path; // Added a '/' after 'storage'
+                    $itemPictures[] = 'public/storage/' . $path; // Added a '/' after 'storage'
 
                 }
                     // Attach uploaded picture file names to the delivery instance
@@ -170,7 +170,7 @@ class DeliveryDetailController extends Controller
 
                     $filename = 'deliveryImages';
                     $path = $file->store($filename, 'public');
-                    $itemPictures[] = 'storage/' . $path; // Added a '/' after 'storage'
+                    $itemPictures[] = 'public/storage/' . $path; // Added a '/' after 'storage'
 
                 }
                     // Attach uploaded picture file names to the delivery instance
@@ -261,7 +261,7 @@ class DeliveryDetailController extends Controller
 
         if(count($delivery) > 0){
             return response()->json([
-                'message'=> 'Records reterived successfully.',
+                'message'=> 'Records retrieved successfully.',
                 'delivery' => $delivery,
                 'success' => true,
             ], 200);
@@ -278,7 +278,7 @@ class DeliveryDetailController extends Controller
         $userdetails = DeliveryDetail::find($id);
         if($userdetails){
             return response()->json([
-                'message'=>'Records reterived successfully',
+                'message'=>'Records retrieved successfully',
                 'data'=> $userdetails,
                 'success'=> true
             ],200);
@@ -298,7 +298,7 @@ class DeliveryDetailController extends Controller
                                     ->get(['id','user_id','pickup_address','dropoff_address','pickup_date','pickup_time','status']);
         if(count($delivery) > 0){
             return response()->json([
-                'message'=> 'Records reterived successfully.',
+                'message'=> 'Records retrieved successfully.',
                 'delivery' => $delivery,
                 'success' => true,
 
@@ -321,7 +321,7 @@ class DeliveryDetailController extends Controller
         $delivery_details = DeliveryDetail::find($id);
         if($delivery_details){
             return response()->json([
-                'message'=>'Records reterived successfully',
+                'message'=>'Records retrieved successfully',
                 'data'=> $delivery_details,
                 'success'=> true
             ],200);
@@ -387,130 +387,96 @@ class DeliveryDetailController extends Controller
 
         
     }
-    // public function cost_estimation(Request $request) {
+    public function deliveryCost_calculation(Request $request) {
         
-    //     $validator = Validator::make($request->all(), [
-    //         'estimation' => 'required|array',
-    //         'estimation.*.distance' => 'required',
-    //         'estimation.*.minutes' => 'required',
-    //         'estimation.*.heavy_items' => 'nullable|in:1',
-    //         'estimation.*.flight_of_stairs' => 'nullable',
-    //         'estimation.assembly' => 'nullable|in:1',
-    //     ]);
+        $validator = Validator::make($request->all(), [
+            'estimation' => 'required|array',
+            'estimation.*.distance' => 'required',
+            'estimation.*.minutes' => 'required',
+            'estimation.*.heavy_items' => 'nullable|integer',
+           // 'estimation.*.flight_of_stairs' => 'nullable',
+            'estimation*.total_assemble_heavy_items' => 'nullable|integer',
+            'estimation*.total_disassemble_heavy_items' => 'nullable|integer',
+        ]);
         
-    //     if ($validator->fails()) {
-    //         return response()->json([
-    //             'message' => $validator->messages()->first()
-    //         ], 422);
-    //     }
-    //     $user = auth()->user();
-    //     $user_id = $user->id;
-    //     $result = [];
-    //     $flight_of_stairs = 0;
-    //     $heavy_items = 0;
-    //     $i = 0;
-    //     $total_price = 0;
-    //     //$assembly = 0;
-    //     foreach ($request->estimation as $estimation) {
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => $validator->messages()->first()
+            ], 422);
+        }
+        //$user = auth()->user();
+        //$user_id = $user->id;
+        $result = [];
+        //$flight_of_stairs = 0;
+        $heavy_items = 0;
+        $i = 0;
+        $total_price = 0;
+        $assembly = 0;
+        $disassembly = 0;
+        foreach ($request->estimation as $estimation) {
            
-    //         if($i == 0){
-    //             $distance = $estimation['distance'] * 3.5;
-    //         }
-    //         else{
-    //         $distance = ($estimation['distance'] * 3.5) + 50;
-    //         }
-    //         $minutes = $estimation['minutes'] * 0.30;
-    //         if (array_key_exists("flight_of_stairs",$estimation)) {
-    //             $flight_of_stairs = $estimation['flight_of_stairs'] * 50;
-    //         }
+            // if($i == 0){
+            //     $distance = $estimation['distance'] * 3.5;
+            // }
+            // else{
+            // $distance = ($estimation['distance'] * 3.5) + 50;
+            // }
+            $distance = $estimation['distance'] * 3.5;
+           
+            $minutes = $estimation['minutes'] * 0.30;
+            // if (array_key_exists("flight_of_stairs",$estimation)) {
+            //     $flight_of_stairs = $estimation['flight_of_stairs'] * 50;
+            // }
             
-    //         if (array_key_exists("heavy_items",$estimation)) {
-    //             $heavy_items = $estimation['heavy_items'] * 150;
-    //         }
-    //         // if (array_key_exists("assembly",$estimation)){
-    //         //     $assembly = 65;
-    //         // }
-            
-    //         $result[] = [
-    //         //     'distance' => $distance,
-    //         //     'minutes' => $minutes,
-    //         //     'heavy_items' => $heavy_items,
-    //         //     'flight_of_stairs' => $flight_of_stairs,
-    //         //     'assembly/disassambly' => $assembly,
-    //             'pickup_'.$i+1 => $distance + $minutes + $heavy_items + $flight_of_stairs,
+            if (array_key_exists("heavy_items",$estimation)) {
+                $heavy_items = 350;
+               
+            }
+            if (array_key_exists("total_assemble_heavy_items",$estimation)){
+                $assembly = $estimation['total_assemble_heavy_items'] * 75;
                 
-    //         ];
-    //         //$total_price = $total_price + ($distance +  $minutes + $heavy_items + $flight_of_stairs);
-    //         $total_price = $total_price + array_sum($result[$i]);
-                        
-    //         $flight_of_stairs = 0;
-    //         $heavy_items = 0;
-    //         //$assembly = 0;
-    //         $i++;
+            }
+            if (array_key_exists("total_disassemble_heavy_items",$estimation)){
+                $disassembly = $estimation['total_disassemble_heavy_items'] * 50;
+                
+            }
+            $result[] = [
+                'distance' => $distance,
+                'minutes' => $minutes,
+                'heavy_items' => $heavy_items,
+                //'flight_of_stairs' => $flight_of_stairs,
+                'assembly' => $assembly,
+                'disassambly' => $disassembly,
+                'pickup_'.$i+1 => $distance + $minutes + $heavy_items + $assembly + $disassembly,
+                
+            ];
+            $total_price = $total_price + ($distance +  $minutes + $heavy_items + $assembly + $disassembly);
+            //$total_price = $total_price + array_sum($result[$i]);
+        
+                
+            //$flight_of_stairs = 0;
+            $heavy_items = 0;
+            $assembly = 0;
+            $disassembly = 0;
+            $i++;
             
             
-    //     }
-    // //    if($i>1){
-    // //     return response()->json([
-    // //         'data' => $result,
-    // //         'convenience_fee' => 150,
-    // //         'total_price' => $total_price + 150 + 50,
-    // //         'success' => true
-    // //     ],200);
-    // //    }
+        }
+    //    if($i>1){
     //     return response()->json([
     //         'data' => $result,
     //         'convenience_fee' => 150,
-    //         'total_price' => $total_price + 150,
+    //         'total_price' => $total_price + 150 + 50,
     //         'success' => true
     //     ],200);
-
-    //     // $user = auth()->user();
-    //     // $user_id = $user->id;
-    //     // $price = DeliveryDetail::find($user_id);
-    //     // $price->update([
-    //     //     'cost_estimation' => json_encode($request->cost_estimation)
-    //     // ]);
-       
-    //     // $distance = [];
-    //     // $minutes = [];
-    //     // $heavy_items = [];
-    //     // $flight_of_stairs = [];
-    
-    //     // foreach ($request->distance as $key => $value) {
-    //     //    if($key == 0){
-    //     //     $distance[$key] = $value * 3.5 ;
-    //     //     $minutes[$key] = $request->minutes[$key] * 0.30;
-    //     //     if ($request->has('heavy_items') && $request->heavy_items[$key] > 0) {
-    //     //         $heavy_items[$key] = $request->heavy_items[$key] * 100 ?? '';
-    //     //     }
-    //     //     if ($request->has('flight_of_stairs') && $request->flight_of_stairs[$key] > 0) {
-    //     //         $flight_of_stairs[$key] = $request->flight_of_stairs[$key] * 50 ?? '';
-    //     //     }
-    //     //     }
-
-    //     //     else{
-    //     //         $distance[$key] = ($value * 3.5) + 50;
-    //     //         $minutes[$key] = $request->minutes[$key] * 0.30;
-    //     //         if($request->has('heavy_items') && $request->heavy_items[$key] > 0) {
-    //     //             $heavy_items[$key] = $request->heavy_items[$key] * 100 ?? '';
-    //     //         }
-                 
-    //     //         if($request->has('flight_of_stairs') && $request->flight_of_stairs[!$key] > 0) {
-    //     //             $flight_of_stairs[$key] = $request->flight_of_stairs[$key] * 50 ?? '';
-    //     //         }
-    //     //     }
-
-           
-            
-    //     // }
-    
-    //     // return response()->json([
-    //     //     'message' => 'Cost details returned successfully',
-            
-    //     //     'success' => true
-    //     // ], 200);
-    // }
+    //    }
+        return response()->json([
+            'data' => $result,
+            'convenience_fee' => 150,
+            'total_price' => $total_price + 150,
+            'success' => true
+        ],200);
+    }
      
 
     /**
