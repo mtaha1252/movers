@@ -387,16 +387,16 @@ class DeliveryDetailController extends Controller
 
         
     }
-    public function deliveryCost_calculation(Request $request) {
+    public function delivery_cost_calculation(Request $request) {
         
         $validator = Validator::make($request->all(), [
             'estimation' => 'required|array',
             'estimation.*.distance' => 'required',
-            'estimation.*.minutes' => 'required',
-            'estimation.*.heavy_items' => 'nullable|integer',
+            'estimation.*.travel_time' => 'required',
+            'estimation.*.heavy_items' => 'required|in:0,1',
            // 'estimation.*.flight_of_stairs' => 'nullable',
-            'estimation*.total_assemble_heavy_items' => 'nullable|integer',
-            'estimation*.total_disassemble_heavy_items' => 'nullable|integer',
+            'estimation*.assemble' => 'required|in:0,1',
+            'estimation*.disassemble' => 'required|in:0,1',
         ]);
         
         if ($validator->fails()) {
@@ -413,6 +413,11 @@ class DeliveryDetailController extends Controller
         $total_price = 0;
         $assembly = 0;
         $disassembly = 0;
+        $total_distance = 0;
+        $total_travel_time = 0;
+        $total_heavy_items = 0;
+        $total_assemblies = 0;
+        $total_disassemblies = 0;
         foreach ($request->estimation as $estimation) {
            
             // if($i == 0){
@@ -421,36 +426,47 @@ class DeliveryDetailController extends Controller
             // else{
             // $distance = ($estimation['distance'] * 3.5) + 50;
             // }
-            $distance = $estimation['distance'] * 3.5;
+            $distance = $estimation['distance'] * 1.75;
+            $total_distance = $total_distance + $distance;
+
+            $travel_time = $estimation['travel_time'] * 0.25;
+            $total_travel_time = $total_travel_time + $travel_time;
            
-            $minutes = $estimation['minutes'] * 0.30;
-            // if (array_key_exists("flight_of_stairs",$estimation)) {
-            //     $flight_of_stairs = $estimation['flight_of_stairs'] * 50;
-            // }
-            
             if (array_key_exists("heavy_items",$estimation)) {
-                $heavy_items = 350;
+                if($estimation['heavy_items'] == 1){
+                    $heavy_items = 75;
+                    $total_heavy_items += $heavy_items;
+                }
+                
                
             }
-            if (array_key_exists("total_assemble_heavy_items",$estimation)){
-                $assembly = $estimation['total_assemble_heavy_items'] * 75;
+            if (array_key_exists("assemble",$estimation)){
+                if($estimation['assemble'] == 1){
+                    $assembly =  30 * 1.30;
+                    $total_assemblies += $assembly;
+                }
+                
                 
             }
-            if (array_key_exists("total_disassemble_heavy_items",$estimation)){
-                $disassembly = $estimation['total_disassemble_heavy_items'] * 50;
+            if (array_key_exists("disassemble",$estimation)){
+                if($estimation['disassemble'] == 1){
+                    $disassembly = 30 * 1.30;
+                    $total_disassemblies += $disassembly;
+                }
+                
                 
             }
             $result[] = [
                 'distance' => $distance,
-                'minutes' => $minutes,
+                'travel_time' => $travel_time,
                 'heavy_items' => $heavy_items,
                 //'flight_of_stairs' => $flight_of_stairs,
                 'assembly' => $assembly,
                 'disassambly' => $disassembly,
-                'pickup_'.$i+1 => $distance + $minutes + $heavy_items + $assembly + $disassembly,
+                'pickup_'.$i+1 => $distance + $travel_time + $heavy_items + $assembly + $disassembly,
                 
             ];
-            $total_price = $total_price + ($distance +  $minutes + $heavy_items + $assembly + $disassembly);
+            $total_price = $total_price + ($distance +  $travel_time + $heavy_items + $assembly + $disassembly);
             //$total_price = $total_price + array_sum($result[$i]);
         
                 
@@ -462,18 +478,19 @@ class DeliveryDetailController extends Controller
             
             
         }
-    //    if($i>1){
-    //     return response()->json([
-    //         'data' => $result,
-    //         'convenience_fee' => 150,
-    //         'total_price' => $total_price + 150 + 50,
-    //         'success' => true
-    //     ],200);
-    //    }
+        $applied_tax = ($total_price + 150) * 0.13;
+
         return response()->json([
             'data' => $result,
-            'convenience_fee' => 150,
-            'total_price' => $total_price + 150,
+            'total_distance' => $total_distance,
+            'total_travel_time' => $total_travel_time,
+            'total_heavy_items' => $total_heavy_items,
+            'total_assemble' => $total_assemblies,
+            'total_disassemble' => $total_disassemblies,
+            'truck_fee' => 150,
+            'total_price_without_tax' => $total_price + 150,
+            'applied_tax' => $applied_tax,
+            'total_price_with_tax' => ($total_price + 150)+ $applied_tax,
             'success' => true
         ],200);
     }
