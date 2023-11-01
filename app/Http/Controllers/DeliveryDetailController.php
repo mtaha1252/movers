@@ -478,7 +478,7 @@ class DeliveryDetailController extends Controller
             
             
         }
-        $applied_tax = ($total_price + 150) * 0.13;
+        $applied_tax = number_format(($total_price + 150) * 0.13, 2);
 
         return response()->json([
             'data' => $result,
@@ -488,9 +488,9 @@ class DeliveryDetailController extends Controller
             'total_assemble' => $total_assemblies,
             'total_disassemble' => $total_disassemblies,
             'truck_fee' => 150,
-            'total_price_without_tax' => $total_price + 150,
-            'applied_tax' => $applied_tax,
-            'total_price_with_tax' => ($total_price + 150)+ $applied_tax,
+            'total_price_without_tax' => number_format(($total_price + 150),2),
+            'applied_tax' => number_format($applied_tax,2),
+            'total_price_with_tax' => number_format(($total_price + 150)+ $applied_tax,2),
             'success' => true
         ],200);
     }
