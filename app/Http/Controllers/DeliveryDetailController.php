@@ -280,23 +280,24 @@ class DeliveryDetailController extends Controller
 
     public function user_get_delivery_details_by_id($id){
         $userdetails = DeliveryDetail::find($id);
-        $total_distance = $userdetails->total_distance_price;
-        $total_time_price = $userdetails->total_time_price;
-        $heavy_items_price = $userdetails->heavy_items_price;
-        $assemble_price = $userdetails->assemble_price;
-        $disassemble_price = $userdetails->disassemble_price;
-        $truck_fee = $userdetails->truck_fee;
-        $sum = ($total_distance +$total_time_price + $heavy_items_price +  $assemble_price + $disassemble_price + $truck_fee);
-        $total = number_format($sum,2);
-        $tax = $sum * 0.13;
-        $tax_included = number_format(($sum + $tax),2);
+        
        
         if($userdetails){
+            $total_distance_price = $userdetails->total_distance_price;
+            $total_time_price = $userdetails->total_time_price;
+            $heavy_items_price = $userdetails->heavy_items_price;
+            $assemble_price = $userdetails->assemble_price;
+            $disassemble_price = $userdetails->disassemble_price;
+            $truck_fee = $userdetails->truck_fee;
+            $sum = ($total_distance_price +$total_time_price + $heavy_items_price +  $assemble_price + $disassemble_price + $truck_fee);
+            $tax = $sum * 0.13;
+            $tax_included = ($sum + $tax);
+
             return response()->json([
                 'message'=>'Records retrieved successfully',
                 'data'=> $userdetails,
-                'total_price_with_tax' => $tax_included,
-                'total_price_without_tax' => $total,
+                'total_price_with_tax' => number_format($tax_included,2),
+                'total_price_without_tax' => number_format($sum,2),
                 'total_tax' => number_format($tax,2),
                 'success'=> true
             ],200);
