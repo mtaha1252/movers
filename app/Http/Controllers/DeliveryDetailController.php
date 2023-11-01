@@ -46,10 +46,12 @@ class DeliveryDetailController extends Controller
             'pickup_longitude' => 'required',
             'dropoff_latitude' => 'required',
             'dropoff_longitude' => 'required',
-            'pickup1_price' => 'nullable',
-            'pickup2_price' => 'nullable',
-            'pickup3_price' => 'nullable',
-            'total_price' => 'nullable',
+            'total_distance_price' => 'required',
+            'total_time_price' => 'required',
+            'heavy_items_price' => 'required',
+            'assemble_price' => 'required',
+            'disassemble_price' => 'required',
+            'truck_fee' => 'required',
             //'item_pictures.*' => 'required', // Adjust the file types and size as needed
         ]);
 
@@ -119,10 +121,12 @@ class DeliveryDetailController extends Controller
             $delivery->pickup_longitude = json_encode($request->pickup_longitude);
             $delivery->dropoff_latitude = json_encode($request->dropoff_latitude);
             $delivery->dropoff_longitude = json_encode($request->dropoff_longitude);
-            $delivery->pickup1_price = $request->pickup1_price;
-            $delivery->pickup2_price = $request->pickup2_price;
-            $delivery->pickup3_price = $request->pickup3_price;
-            $delivery->total_price = $request->total_price;
+            $delivery->total_distance_price = $request->total_distance_price;
+            $delivery->total_time_price = $request->total_time_price;
+            $delivery->heavy_items_price = $request->heavy_items_price;
+            $delivery->assemble_price = $request->assemble_price;
+            $delivery->disassemble_price = $request->disassemble_price;
+            $delivery->truck_fee = $request->truck_fee;
             $delivery->status = $request->status;
 
 
@@ -482,12 +486,12 @@ class DeliveryDetailController extends Controller
 
         return response()->json([
             'data' => $result,
-            'total_distance' => $total_distance,
-            'total_travel_time' => $total_travel_time,
-            'total_heavy_items' => $total_heavy_items,
-            'total_assemble' => $total_assemblies,
-            'total_disassemble' => $total_disassemblies,
-            'truck_fee' => 150,
+            'total_distance' => number_format($total_distance,2),
+            'total_travel_time' => number_format($total_travel_time,2),
+            'total_heavy_items' => number_format($total_heavy_items,2),
+            'total_assemble' => number_format($total_assemblies,2),
+            'total_disassemble' => number_format($total_disassemblies,2),
+            'truck_fee' => number_format(150,2),
             'total_price_without_tax' => number_format(($total_price + 150),2),
             'applied_tax' => number_format($applied_tax,2),
             'total_price_with_tax' => number_format(($total_price + 150)+ $applied_tax,2),

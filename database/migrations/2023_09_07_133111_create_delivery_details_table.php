@@ -44,11 +44,12 @@ return new class extends Migration
             $table->json('pickup_longitude')->nullable();
             $table->json('dropoff_latitude')->nullable();
             $table->json('dropoff_longitude')->nullable();
-            $table->string('pickup1_price')->nullable();
-            $table->string('pickup2_price')->nullable();
-            $table->string('pickup3_price')->nullable();
-            $table->string('total_price')->nullable();
-
+            $table->string('total_distance_price')->nullable();
+            $table->string('total_time_price')->nullable();
+            $table->string('heavy_items_price')->nullable();
+            $table->string('assemble_price')->nullable();
+            $table->string('disassemble_price')->nullable();
+            $table->string('truck_fee')->nullable();
             $table->timestamps();
         });
     }
