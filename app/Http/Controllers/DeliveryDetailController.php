@@ -280,10 +280,24 @@ class DeliveryDetailController extends Controller
 
     public function user_get_delivery_details_by_id($id){
         $userdetails = DeliveryDetail::find($id);
+        $total_distance = $userdetails->total_distance_price;
+        $total_time_price = $userdetails->total_time_price;
+        $heavy_items_price = $userdetails->heavy_items_price;
+        $assemble_price = $userdetails->assemble_price;
+        $disassemble_price = $userdetails->disassemble_price;
+        $truck_fee = $userdetails->truck_fee;
+        $sum = ($total_distance +$total_time_price + $heavy_items_price +  $assemble_price + $disassemble_price + $truck_fee);
+        $total = number_format($sum,2);
+        $tax = $sum * 0.13;
+        $tax_included = number_format(($sum + $tax),2);
+       
         if($userdetails){
             return response()->json([
                 'message'=>'Records retrieved successfully',
                 'data'=> $userdetails,
+                'total_price_with_tax' => $tax_included,
+                'total_price_without_tax' => $total,
+                'total_tax' => number_format($tax,2),
                 'success'=> true
             ],200);
         } else{
@@ -499,7 +513,26 @@ class DeliveryDetailController extends Controller
         ],200);
     }
      
-
+    public function change_status(Request $request){
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+            'status' => 'required',
+        ]);
+        if($validator->fails()){
+            return response()->json([
+                'message' => $validator->messages()->first()
+            ],422);
+        }
+        $id = $request->id;
+        $delivery_status = DeliveryDetail::find($id);
+        $delivery_status->update([
+            'status' => $request->status,
+        ]);
+        return response()->json([
+            'message' => 'status has been changed successfully',
+            'success' => true,
+        ],200);
+    }
     /**
      * Display a listing of the resource.
      *
