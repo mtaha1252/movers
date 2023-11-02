@@ -267,7 +267,7 @@ class UserController extends Controller
         $this->sendSMS($request, $newOtp, $message);
 
         // Update the user's password
-        $user->otp = $newOtp;  // $request->password 
+        $user->otp_code = $newOtp;  // $request->password 
 
         if ($user->save()) {
             return response()->json([
