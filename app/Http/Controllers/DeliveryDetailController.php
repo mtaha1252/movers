@@ -476,13 +476,13 @@ class DeliveryDetailController extends Controller
                 
             }
             $result[] = [
-                'distance' => $distance,
-                'travel_time' => $travel_time,
-                'heavy_items' => $heavy_items,
+                'distance' => number_format($distance,2),
+                'travel_time' => number_format($travel_time,2),
+                'heavy_items' => number_format($heavy_items,2),
                 //'flight_of_stairs' => $flight_of_stairs,
-                'assembly' => $assembly,
-                'disassambly' => $disassembly,
-                'pickup_'.$i+1 => $distance + $travel_time + $heavy_items + $assembly + $disassembly,
+                'assembly' => number_format($assembly,2),
+                'disassambly' => number_format($disassembly,2),
+                'total' => number_format(($distance + $travel_time + $heavy_items + $assembly + $disassembly),2)
                 
             ];
             $total_price = $total_price + ($distance +  $travel_time + $heavy_items + $assembly + $disassembly);
