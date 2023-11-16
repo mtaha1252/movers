@@ -445,11 +445,11 @@ class DeliveryDetailController extends Controller
             // else{
             // $distance = ($estimation['distance'] * 3.5) + 50;
             // }
-            $distance = $estimation['distance'] * 1.75;
-            $total_distance = $total_distance + $distance;
+            $distance = doubleval($estimation['distance'] * (1.75));
+            $total_distance = doubleval($total_distance + $distance);
 
-            $travel_time = $estimation['travel_time'] * 0.25;
-            $total_travel_time = $total_travel_time + $travel_time;
+            $travel_time = doubleval($estimation['travel_time'] * (0.25));
+            $total_travel_time = doubleval($total_travel_time + $travel_time);
            
             if (array_key_exists("heavy_items",$estimation)) {
                 if($estimation['heavy_items'] == 1){
@@ -497,7 +497,7 @@ class DeliveryDetailController extends Controller
             
             
         }
-        $applied_tax = number_format(($total_price + 150) * 0.13, 2);
+        $applied_tax = doubleval(($total_price + 150) * 0.13);
 
         return response()->json([
             'data' => $result,
@@ -510,7 +510,7 @@ class DeliveryDetailController extends Controller
             'total_price_without_tax' => number_format(($total_price + 150),2),
             'applied_tax' => number_format($applied_tax,2),
             'total_price_with_tax' => number_format(($total_price + 150)+ $applied_tax,2),
-            'success' => true
+             'success' => true
         ],200);
     }
      
