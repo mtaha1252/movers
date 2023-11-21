@@ -80,8 +80,8 @@ class DeliveryDetailController extends Controller
             $delivery->number_of_items = json_encode($request->number_of_items);
             $delivery->heavey_weight_items = json_encode($request->heavey_weight_items);
             $delivery->pickup_property_type = json_encode($request->pickup_property_type);
-            $pickup_count = count($delivery->pickup_property_type);
-            
+            $pickup_count = count($request->pickup_property_type);
+            //return count($request->pickup_property_type);
             for($i = 0; $i < $pickup_count; $i++){
                 if ($delivery->pickup_property_type[$i] === 'Apartment' || $delivery->pickup_property_type[$i] === 'Condominium' || $delivery->pickup_property_type[$i] === 'Stacked town house' || $delivery->pickup_property_type[$i] === 'Townhouse') {
                     $delivery->pickup_unit_number = json_encode($request->pickup_unit_number);
@@ -100,10 +100,11 @@ class DeliveryDetailController extends Controller
                 $delivery->pickup_elevator_timing_to = json_encode($request->pickup_elevator_timing_to);
             }
             $delivery->dropoff_property_type = json_encode($request->dropoff_property_type);
-            $count_dropoff = count($delivery->dropoff_property_type);
+            $count_dropoff = count($request->dropoff_property_type);
             for($i = 0; $i < $count_dropoff; $i++){
                 if ($delivery->dropoff_property_type[$i] === 'Apartment' || $delivery->dropoff_property_type[$i] === 'Condominium' || $delivery->dropoff_property_type[$i] === 'Stacked town house' || $delivery->dropoff_property_type[$i] === 'Townhouse') {
                     $delivery->dropoff_unit_number = json_encode($request->dropoff_unit_number);
+                    //dd('hello');
                 }
             }
             
@@ -476,13 +477,13 @@ class DeliveryDetailController extends Controller
                 
             }
             $result[] = [
-                'distance' => number_format($distance,2),
-                'travel_time' => number_format($travel_time,2),
-                'heavy_items' => number_format($heavy_items,2),
+                'distance' => number_format($distance,2,'.',''),
+                'travel_time' => number_format($travel_time,2,'.',''),
+                'heavy_items' => number_format($heavy_items,2,'.',''),
                 //'flight_of_stairs' => $flight_of_stairs,
-                'assembly' => number_format($assembly,2),
-                'disassambly' => number_format($disassembly,2),
-                'total' => number_format(($distance + $travel_time + $heavy_items + $assembly + $disassembly),2)
+                'assembly' => number_format($assembly,2,'.',''),
+                'disassambly' => number_format($disassembly,2,'.',''),
+                'total' => number_format(($distance + $travel_time + $heavy_items + $assembly + $disassembly),2,'.','')
                 
             ];
             $total_price = $total_price + ($distance +  $travel_time + $heavy_items + $assembly + $disassembly);
@@ -501,15 +502,15 @@ class DeliveryDetailController extends Controller
 
         return response()->json([
             'data' => $result,
-            'total_distance' => number_format($total_distance,2),
-            'total_travel_time' => number_format($total_travel_time,2),
-            'total_heavy_items' => number_format($total_heavy_items,2),
-            'total_assemble' => number_format($total_assemblies,2),
-            'total_disassemble' => number_format($total_disassemblies,2),
+            'total_distance' => number_format($total_distance,2,'.',''),
+            'total_travel_time' => number_format($total_travel_time,2,'.',''),
+            'total_heavy_items' => number_format($total_heavy_items,2,'.',''),
+            'total_assemble' => number_format($total_assemblies,2,'.',''),
+            'total_disassemble' => number_format($total_disassemblies,2,'.',''),
             'truck_fee' => number_format(150,2),
-            'total_price_without_tax' => number_format(($total_price + 150),2),
+            'total_price_without_tax' => number_format(($total_price + 150),2,'.',''),
             'applied_tax' => number_format($applied_tax,2),
-            'total_price_with_tax' => number_format(($total_price + 150)+ $applied_tax,2),
+            'total_price_with_tax' => number_format(($total_price + 150)+ $applied_tax,2,'.',''),
              'success' => true
         ],200);
     }
