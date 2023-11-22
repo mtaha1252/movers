@@ -487,7 +487,7 @@ class UserController extends Controller
             ],200);
         }
     }
-    public function user_exist(Request $request)
+    public function social_user_existance(Request $request)
     {
         $validator = Validator::make(request()->all(),[
             'email' => 'required|email'
@@ -515,16 +515,13 @@ class UserController extends Controller
        }
     }
 
-    public function register_through_google(Request $request)
+    public function social_user_registration(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'first_name' => 'required|string',
             'last_name' => 'required|string',
-            'phone_number' => 'required|unique:users',
             'email' => 'required|email|unique:users',
             'user_type' => 'required|in:user',
-        ], [
-            'phone_number.unique' => 'Phone number already in use.',
         ]);
 
         if ($validator->fails()) {
@@ -533,12 +530,10 @@ class UserController extends Controller
         // Create a new user
         // You'll need to define your User model and its properties
         $user = new User();
-        //$user->username = $request->input('username');
         $user->first_name = $request->input('first_name');
         $user->last_name = $request->input('last_name');
         $user->full_name = $request->input('first_name') . " " . $request->input('last_name');
         $user->username = $request->input('first_name')."_".rand(1000,9999);
-        $user->phone_number = $request->input('phone_number');
         $user->password = Hash::make($request->input('password'));
         $user->email = $request->input('email');
         $user->user_type = $request->input('user_type');
@@ -552,14 +547,6 @@ class UserController extends Controller
         }
         $user->save();
         // Generate a token for the user
-        $checkphone = User::where('phone_number', '=', $request->phone_number)->first();
-
-        if (!$checkphone) {
-            return response()->json([
-                'message' => 'This phone is not valid.'
-            ], 422);
-        }
-
         $token = $user->createToken('authToken')->plainTextToken;
 
         // Return user information and token in the response

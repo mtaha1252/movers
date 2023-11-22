@@ -17,8 +17,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     Route::post('forgot_password', [UserController::class, 'forgotPassword']);
     Route::post('otp_verification', [UserController::class, 'verifyOtp']);
     Route::post('create_password', [UserController::class, 'createPassword']);
-    Route::post('user_exist',[UserController::class,'user_exist']);
-    Route::post('register_through_google',[UserController::class,'register_through_google']);
+    Route::post('social_user_existance',[UserController::class,'social_user_existance']);
+    Route::post('social_user_registration',[UserController::class,'social_user_registration']);
 
     Route::middleware(['auth:sanctum', 'isUser'])->group(function () {
         Route::post('moving_details', [MovingDetailsController::class, 'storeMoveDetails'])->name('moving_details');

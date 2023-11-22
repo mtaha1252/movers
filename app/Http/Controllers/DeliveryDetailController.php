@@ -509,7 +509,7 @@ class DeliveryDetailController extends Controller
             'total_disassemble' => number_format($total_disassemblies,2,'.',''),
             'truck_fee' => number_format(150,2),
             'total_price_without_tax' => number_format(($total_price + 150),2,'.',''),
-            'applied_tax' => number_format($applied_tax,2),
+            'applied_tax' => number_format($applied_tax,2,'.',''),
             'total_price_with_tax' => number_format(($total_price + 150)+ $applied_tax,2,'.',''),
              'success' => true
         ],200);
