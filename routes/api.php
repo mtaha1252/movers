@@ -19,8 +19,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     Route::post('create_password', [UserController::class, 'createPassword']);
     Route::post('social_user_existance',[UserController::class,'social_user_existance']);
     Route::post('social_user_registration',[UserController::class,'social_user_registration']);
+   
 
     Route::middleware(['auth:sanctum', 'isUser'])->group(function () {
+        Route::get('delete_account',[UserController::class, 'delete_account']);
         Route::post('moving_details', [MovingDetailsController::class, 'storeMoveDetails'])->name('moving_details');
         Route::post('resend_otp', [UserController::class, 'resendOtp']);
         Route::post('edit_profile', [UserController::class, 'editProfile']);

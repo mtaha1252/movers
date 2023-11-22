@@ -7,6 +7,7 @@ use Exception;
 
 use App\Models\User;
 use App\Mail\OtpMail;
+use App\Models\DeliveryDetail;
 use App\Models\MovingDetails;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -557,4 +558,38 @@ class UserController extends Controller
             'user' => $user,
         ], 200);
     }
+     
+
+
+    public function delete_account()
+    {
+        try {
+            $user = auth()->user();
+
+            if (!$user) {
+                return response()->json([
+                    'message' => 'Invalid user.',
+                ], 422);
+            }
+            
+            // Delete related details
+            DeliveryDetail::where('user_id', $user->id)->delete();
+            MovingDetails::where('user_id', $user->id)->delete();
+
+            // Force delete the user
+            $user->forceDelete();
+
+            // Logout the user
+            Auth::guard('web')->logout();
+
+            return response()->json([
+                'message' => 'Account deleted successfully.',
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'An error occurred while deleting the account.',
+            ], 500);
+        }
+    }
+
 }
