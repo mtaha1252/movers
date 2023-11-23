@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Twilio\Rest\Client;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -538,15 +539,24 @@ class UserController extends Controller
         $user->password = Hash::make($request->input('password'));
         $user->email = $request->input('email');
         $user->user_type = $request->input('user_type');
-       
+       // Save the user model to persist the changes
+       $user->save();
 
-        if ($request->hasFile('profile_image')) {
-            $filename = 'users';
-            $image = $request->file('profile_image');
-            $path = $image->store($filename, 'public');
-            $user->profile_image = 'public/storage/' . $path; // Added a '/' after 'storage'
+        if (filter_var($request->profile_image, FILTER_VALIDATE_URL)) {
+            // Download the image
+            $contents = file_get_contents($request->profile_image);
+            // Generate a new filename
+            $filename = 'profile-photo-' . $user->id . '.jpg';
+        
+            // Save the file to the storage directory (public disk)
+            Storage::disk('public')->put($filename, $contents);
+        
+            // Update the user's profile_image field with the file path
+            $user->profile_image = 'storage/' . $filename;
+        
         }
-        $user->save();
+        
+        // $user->save();
         // Generate a token for the user
         $token = $user->createToken('authToken')->plainTextToken;
 
