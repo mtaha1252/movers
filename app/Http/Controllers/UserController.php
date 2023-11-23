@@ -583,6 +583,7 @@ class UserController extends Controller
             Auth::guard('web')->logout();
 
             return response()->json([
+                'success' => true,
                 'message' => 'Account deleted successfully.',
             ]);
         } catch (\Exception $e) {
