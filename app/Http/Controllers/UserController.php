@@ -552,7 +552,7 @@ class UserController extends Controller
             Storage::disk('public')->put($filename, $contents);
         
             // Update the user's profile_image field with the file path
-            $user->profile_image = 'storage/' . $filename;
+            $user->profile_image = 'public/storage/' . $filename;
         
         }
         
