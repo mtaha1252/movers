@@ -262,7 +262,7 @@ class DeliveryDetailController extends Controller
         $delivery = DeliveryDetail::where('user_id', $user->id)
                     ->with(['userInfo:id,username,email,phone_number,first_name,last_name'])
                     ->get(['id', 'user_id', 'pickup_address', 'dropoff_address', 'pickup_date', 'pickup_time', 'status'])
-                    ->orderBy('id', 'desc');
+                    ->sortByDesc('id');
 
 
         if(count($delivery) > 0){
