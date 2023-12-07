@@ -21,6 +21,7 @@ class DeliveryDetailController extends Controller
             'pickup_address' => 'required|array|between:1,3',
             'dropoff_address' => 'required|array|between:1,3',
             'pickup_date' => ['required','string'],
+            'current_date' => ['required','string'],
             'pickup_time' => ['required','string'],
             'detailed_description' => ['required','string'],
             'number_of_items' => ['required','array'],
@@ -75,6 +76,7 @@ class DeliveryDetailController extends Controller
             $delivery->pickup_address = json_encode($request->pickup_address);
             $delivery->dropoff_address = json_encode($request->dropoff_address);
             $delivery->pickup_date = $request->pickup_date;
+            $delivery->current_date = $request->current_date;
             $delivery->pickup_time = $request->pickup_time;
             $delivery->detailed_description = $request->detailed_description;
             $delivery->number_of_items = json_encode($request->number_of_items);

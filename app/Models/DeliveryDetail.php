@@ -13,6 +13,7 @@ class DeliveryDetail extends Model
         'pickup_address',
         'dropoff_address',
         'pickup_date',
+        'current_date',
         'pickup_time',
         'pickup1_pictures',
         'pickup2_pictures',
