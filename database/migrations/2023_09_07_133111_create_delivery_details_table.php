@@ -19,6 +19,7 @@ return new class extends Migration
             $table->json('pickup_address')->nullable();
             $table->json('dropoff_address')->nullable();
             $table->string('pickup_date')->nullable();
+            $table->string('current_date')->nullable();
             $table->string('pickup_time')->nullable();
             $table->text('detailed_description')->nullable();
             $table->json('number_of_items')->nullable();
