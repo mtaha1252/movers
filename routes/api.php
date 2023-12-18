@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\BookATruckController;
+use App\Http\Controllers\BookAMoverController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
@@ -36,6 +38,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         Route::get('logout',[Usercontroller::class, 'logout']);
         Route::post('delivery_cost_calculation',[DeliveryDetailController::class,'delivery_cost_calculation']);
         Route::get('get_user_data',[UserController::class,'getUserData']);
+        Route::post('book_a_truck',[BookATruckController::class,'BookingATruck']);
+        Route::post('book_a_mover',[BookAMoverController::class,'bookingAmover']);
     });
     Route::middleware(['auth:sanctum', 'isAdmin'])->group(function () {
         Route::get('get_delivery_details',[DeliveryDetailController::class, 'get_delivery_details']);
