@@ -51,6 +51,8 @@ return new class extends Migration
             $table->string('assemble_price')->nullable();
             $table->string('disassemble_price')->nullable();
             $table->string('truck_fee')->nullable();
+            $table->boolean('special_delivery')->nullable();
+            $table->json('reciept_image')->nullable();
             $table->timestamps();
         });
     }

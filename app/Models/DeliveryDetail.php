@@ -9,6 +9,9 @@ class DeliveryDetail extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'special_delivery' => 'boolean'
+    ];
     protected $fillable = [
         'pickup_address',
         'dropoff_address',
@@ -37,7 +40,9 @@ class DeliveryDetail extends Model
         'dropoff_latitude',
         'dropoff_longitude',
         'pickup_flight_of_stairs',
-        'status'
+        'status',
+        'special_delivery',
+        'reciept_image'
     ];
 
 
@@ -137,6 +142,9 @@ class DeliveryDetail extends Model
         return json_decode($value);
     }
     public function getDropoffFlightOfStairsAttribute($value){
+        return json_decode($value);
+    }
+    public function getRecieptImageAttribute($value){
         return json_decode($value);
     }
 

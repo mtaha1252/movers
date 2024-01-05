@@ -53,6 +53,9 @@ class DeliveryDetailController extends Controller
             'assemble_price' => 'required',
             'disassemble_price' => 'required',
             'truck_fee' => 'required',
+            'special_delivery' => 'required|in:0,1',
+            'reciept_image' => 'required_if:special_delivery,1'
+
             //'item_pictures.*' => 'required', // Adjust the file types and size as needed
         ]);
 
@@ -131,10 +134,19 @@ class DeliveryDetailController extends Controller
             $delivery->disassemble_price = $request->disassemble_price;
             $delivery->truck_fee = $request->truck_fee;
             $delivery->status = $request->status;
+            $delivery->special_delivery = $request->special_delivery;
 
 
            // $deliveries = [];
             // Handle item pictures
+            $receiptsPictures = [];
+            if ($request->hasFile('reciept_image')) {
+                $file = $request->file('reciept_image');
+                $filename = 'reciept_image';
+                $path = $file->store($filename, 'public');
+                $receiptsPictures = 'public/storage/' . $path;
+                $delivery->reciept_image = json_encode($receiptsPictures);
+            }
 
             if ($request->hasFile('pickup1_pictures')) {
 
