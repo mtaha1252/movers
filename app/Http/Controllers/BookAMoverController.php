@@ -56,4 +56,34 @@ class BookAMoverController extends Controller
             ],500);
         }
     }
+
+    public function getBookAMoverDetails(){
+        $moverDetails = BookAMover::all();
+        if(!$moverDetails){
+            return response()->json([
+                'message' => 'No details are available for book a mover',
+                'success' => false
+            ],200);
+        }
+        return response()->json([
+            'message' => 'Book a movers details returned successfully',
+            'movers_details' => $moverDetails,
+            'success' => true
+        ],200);
+    }
+
+    public function getBookAMoverDetailsById($id){
+        $moverDetailsById = BookAMover::find($id);
+        if(!$moverDetailsById){
+            return response()->json([
+                'message' => 'No details are available for book a mover',
+                'success' => false
+            ],200);
+        }
+        return response()->json([
+            'message' => 'Book a mover detail returned successfully',
+            'movers_details' => $moverDetailsById,
+            'success' => true
+        ],200);
+    }
 }

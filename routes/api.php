@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\MovingDetailsController;
 use App\Http\Controllers\DeliveryDetailController;
 use App\Http\Middleware\IsUser;
+use App\Models\BookAMover;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -40,6 +41,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         Route::get('get_user_data',[UserController::class,'getUserData']);
         Route::post('book_a_truck',[BookATruckController::class,'BookingATruck']);
         Route::post('book_a_mover',[BookAMoverController::class,'bookingAmover']);
+        Route::get('get_book_a_movers_details',[BookAMoverController::class,'getBookAMoverDetails']);
+        Route::get('get_book_a_movers_detail_by_id/{id}',[BookAMoverController::class,'getBookAMoverDetailsById']);
+        Route::get('get_book_a_truck_details',[BookATruckController::class,'getBookATruckDetails']);
+        Route::get('get_book_a_truck_detail_by_id/{id}',[BookATruckController::class,'getBookATruckDetailsById']);
     });
     Route::middleware(['auth:sanctum', 'isAdmin'])->group(function () {
         Route::get('get_delivery_details',[DeliveryDetailController::class, 'get_delivery_details']);

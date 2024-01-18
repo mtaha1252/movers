@@ -46,4 +46,34 @@ class BookATruckController extends Controller
         ],500);
        }
     }
+
+    public function getBookATruckDetails(){
+        $truckDetails = BookATruck::all();
+        if(!$truckDetails){
+            return response()->json([
+                'message' => 'No record is available',
+                'success' => false
+            ],200);
+        }
+        return response()->json([
+            'message' => 'Book a truck details returned successfully',
+            'truck_details' => $truckDetails,
+            'success' => true
+        ],200);
+    }
+
+    public function getBookATruckDetailsById($id){
+        $truckDetails = BookATruck::find($id);
+        if(!$truckDetails){
+            return response()->json([
+                'message' => 'No record is available',
+                'success' => false
+            ],200);
+        }
+        return response()->json([
+            'message' => 'Book a truck details returned successfully',
+            'truck_details' => $truckDetails,
+            'success' => true
+        ],200);
+    }
 }
